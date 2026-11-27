@@ -229,6 +229,62 @@ insert into public.report_votes (report_id, voter_id, vote) values
 on conflict do nothing;
 
 -------------------------------------------------------------------------------
+-- More verified demo residents, to demonstrate the community thresholds
+-- (default: 3 confirmations to confirm, 3 disputes to dispute, ratio 2.0).
+-------------------------------------------------------------------------------
+do $$
+declare
+  demo record;
+begin
+  for demo in
+    select * from (values
+      ('00000000-0000-4000-8000-000000000006'::uuid, 'ana.demo@example.test', 'Ana Reyes (Demo)', '6'),
+      ('00000000-0000-4000-8000-000000000007'::uuid, 'jose.demo@example.test', 'Jose Garcia (Demo)', '9'),
+      ('00000000-0000-4000-8000-000000000008'::uuid, 'liza.demo@example.test', 'Liza Mendoza (Demo)', '14')
+    ) as t (id, email, display_name, barangay_id)
+  loop
+    insert into auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, email_change, email_change_token_new, recovery_token
+    ) values (
+      '00000000-0000-0000-0000-000000000000', demo.id, 'authenticated', 'authenticated',
+      demo.email, extensions.crypt('CuencaDemo2026!', extensions.gen_salt('bf')), now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('display_name', demo.display_name, 'barangay_id', demo.barangay_id,
+                         'consent_given', 'true', 'consent_version', '2026-11-v2'),
+      now(), now(), '', '', '', ''
+    ) on conflict (id) do nothing;
+
+    insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+    select gen_random_uuid(), demo.id, demo.id::text,
+           jsonb_build_object('sub', demo.id::text, 'email', demo.email, 'email_verified', true),
+           'email', now(), now(), now()
+    where not exists (select 1 from auth.identities i where i.user_id = demo.id and i.provider = 'email');
+  end loop;
+end;
+$$;
+
+update public.profiles set verification_status = 'approved'
+where id in ('00000000-0000-4000-8000-000000000006', '00000000-0000-4000-8000-000000000007',
+             '00000000-0000-4000-8000-000000000008');
+
+-- Flood report (a1): confirmed by the community (4 confirmations).
+-- Streetlight report (a3): disputed (3 disputes) -> hidden from the residents' map.
+-- Critical fire report (a6): disputed (3 disputes) -> still critical and still visible.
+insert into public.report_votes (report_id, voter_id, vote) values
+  ('a0000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000006', 'confirm'),
+  ('a0000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000007', 'confirm'),
+  ('a0000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000008', 'confirm'),
+  ('a0000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000006', 'dispute'),
+  ('a0000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000007', 'dispute'),
+  ('a0000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000008', 'dispute'),
+  ('a0000000-0000-4000-8000-000000000006', '00000000-0000-4000-8000-000000000005', 'dispute'),
+  ('a0000000-0000-4000-8000-000000000006', '00000000-0000-4000-8000-000000000007', 'dispute'),
+  ('a0000000-0000-4000-8000-000000000006', '00000000-0000-4000-8000-000000000008', 'dispute')
+on conflict do nothing;
+
+-------------------------------------------------------------------------------
 -- Sample alerts
 -------------------------------------------------------------------------------
 insert into public.alerts (id, title, body, level, scope, target_barangay_ids, starts_at, expires_at, created_by)
