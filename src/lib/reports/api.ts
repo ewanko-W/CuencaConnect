@@ -44,6 +44,7 @@ export async function sendReport(draft: ReportDraft): Promise<string> {
     p_lng: draft.lng,
     p_accuracy_m: draft.accuracy,
     p_location_source: draft.locationSource,
+    p_barangay_id: draft.barangayId ?? null,
   })
   if (error) fail(error.message)
 

@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEv
 import { Link, useNavigate } from 'react-router-dom'
 import { LocationPicker } from '../../components/map/LocationPicker'
 import { VerificationGate } from '../../components/VerificationGate'
+import { fetchBarangays } from '../../lib/auth/api'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { CUENCA_CENTER, isWithinCuenca, type LatLng } from '../../lib/geo/cuenca'
 import { useGeolocation } from '../../lib/geo/useGeolocation'
 import { prepareImage } from '../../lib/reports/image'
 import { useOutbox } from '../../lib/reports/OutboxContext'
 import { submitOrSave } from '../../lib/reports/submitOrSave'
+import { useAsyncData } from '../../lib/useAsyncData'
 import {
   CATEGORY_INFO,
   REPORT_CATEGORIES,
@@ -39,7 +41,9 @@ export function NewReportPage() {
 }
 
 function ReportForm() {
-  const { session } = useAuth()
+  const { session, profile } = useAuth()
+  const barangays = useAsyncData(fetchBarangays, [])
+  const [barangayId, setBarangayId] = useState<number | null>(profile?.barangay_id ?? null)
   const outbox = useOutbox()
   const navigate = useNavigate()
   const { state: geo, locate, fix: gpsFix } = useGeolocation({ auto: true })
@@ -101,6 +105,7 @@ function ReportForm() {
       lng: location.lng,
       accuracy: locationSource === 'gps' && gpsFix ? gpsFix.accuracy : null,
       locationSource,
+      barangayId,
       photos: photos.map((p) => p.blob),
       createdAt: new Date().toISOString(),
       attempts: 0,
@@ -168,6 +173,20 @@ function ReportForm() {
         <button type="button" className="button button--small" onClick={locateMe}>
           📡 Use my current location
         </button>
+        <label className="field">
+          <span>Barangay where it happened</span>
+          <select
+            value={barangayId ?? ''}
+            onChange={(e) => setBarangayId(e.target.value ? Number(e.target.value) : null)}
+          >
+            <option value="">Not sure (use my barangay)</option>
+            {(barangays.data ?? []).map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </fieldset>
 
       {/* 2. Photo */}

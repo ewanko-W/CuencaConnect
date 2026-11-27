@@ -34,7 +34,7 @@ export type ReportStatus =
 export const STATUS_LABELS: Record<ReportStatus, string> = {
   submitted: 'Submitted',
   routed: 'Sent to office',
-  acknowledged: 'Acknowledged',
+  acknowledged: 'Received',
   in_progress: 'In progress',
   resolved: 'Resolved',
   rejected: 'Not accepted',
@@ -102,6 +102,8 @@ export interface ReportDraft {
   lng: number
   accuracy: number | null
   locationSource: LocationSource
+  /** Barangay where the incident happened (older drafts may lack it). */
+  barangayId?: number | null
   photos: Blob[]
   createdAt: string
   attempts: number
