@@ -17,7 +17,7 @@ select ok((select relrowsecurity from pg_class where oid = 'public.barangays'::r
 select ok((select relrowsecurity from pg_class where oid = 'public.offices'::regclass), 'RLS is enabled on offices');
 select enum_has_labels('public', 'user_role', array['resident', 'office_staff', 'admin'], 'user_role has exactly the three roles');
 select is((select count(*)::int from public.barangays), 21, 'all 21 barangays of Cuenca are loaded');
-select is(public.current_consent_version(), '2026-11-v1', 'current consent version is defined in the database');
+select is(public.current_consent_version(), '2026-11-v2', 'current consent version is defined in the database');
 
 -- Fixture office for staff tests (independent of seed data).
 insert into public.offices (id, code, name) overriding system value values (900, 'TST', 'Test Office');
@@ -40,13 +40,13 @@ select throws_ok(
 select throws_ok(
   $$insert into auth.users (id, email, raw_user_meta_data) values
     ('10000000-0000-4000-8000-000000000003', 'nobarangay@example.test',
-     '{"display_name":"No Barangay","consent_given":"true","consent_version":"2026-11-v1"}')$$,
+     '{"display_name":"No Barangay","consent_given":"true","consent_version":"2026-11-v2"}')$$,
   '23514', null, 'resident sign-up without a barangay is rejected');
 
 select lives_ok(
   $$insert into auth.users (id, email, raw_user_meta_data) values
     ('20000000-0000-4000-8000-00000000000a', 'resident.a@example.test',
-     '{"display_name":"Resident A","barangay_id":"6","consent_given":"true","consent_version":"2026-11-v1"}')$$,
+     '{"display_name":"Resident A","barangay_id":"6","consent_given":"true","consent_version":"2026-11-v2"}')$$,
   'sign-up with consent succeeds');
 
 select results_eq(
@@ -56,14 +56,14 @@ select results_eq(
   'a new user is an unverified resident in the chosen barangay');
 
 select ok(
-  (select consented_at is not null and consent_version = '2026-11-v1' from public.profiles
+  (select consented_at is not null and consent_version = '2026-11-v2' from public.profiles
    where id = '20000000-0000-4000-8000-00000000000a'),
   'consent version and timestamp are recorded');
 
 select lives_ok(
   $$insert into auth.users (id, email, raw_user_meta_data) values
     ('20000000-0000-4000-8000-00000000000b', 'resident.b@example.test',
-     '{"display_name":"Resident B","barangay_id":"1","consent_given":"true","consent_version":"2026-11-v1","role":"admin","cc_role":"admin"}')$$,
+     '{"display_name":"Resident B","barangay_id":"1","consent_given":"true","consent_version":"2026-11-v2","role":"admin","cc_role":"admin"}')$$,
   'sign-up that tries to claim admin in user metadata still succeeds');
 
 select is(

@@ -4,8 +4,8 @@ import { CONSENT_VERSION, friendlyAuthError } from './api'
 describe('auth api helpers', () => {
   it('uses the consent version defined in the database migration', () => {
     // Must match public.current_consent_version() in
-    // supabase/migrations/20261127000100_profiles_and_roles.sql
-    expect(CONSENT_VERSION).toBe('2026-11-v1')
+    // supabase/migrations/20261127000200_consent_v2_public_map.sql
+    expect(CONSENT_VERSION).toBe('2026-11-v2')
   })
 
   it('maps database sign-up failures to a helpful message', () => {

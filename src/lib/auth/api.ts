@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import type { Barangay, Profile } from './types'
 
 /** Must equal public.current_consent_version() in the database. */
-export const CONSENT_VERSION = '2026-11-v1'
+export const CONSENT_VERSION = '2026-11-v2'
 
 const PROFILE_COLUMNS = 'id, role, display_name, barangay_id, office_id, verification_status'
 

@@ -23,6 +23,12 @@ export function PrivacyNotice() {
           only with municipal administrators and the office handling the report.
         </li>
         <li>
+          <strong>Nearby incidents map:</strong> other verified residents may see the category, status, and an
+          approximate location (about 50 meters) of your active reports, without your name, description, or
+          photos, so they can confirm or dispute them. Photos are re-encoded on your device, which removes hidden
+          location data (EXIF).
+        </li>
+        <li>
           <strong>ID verification:</strong> a photo of a government ID, used only to verify you. We record the
           ID type and result, never the ID number, and delete the image 7 days after review.
         </li>
