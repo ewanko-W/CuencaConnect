@@ -8,6 +8,8 @@ import type { Profile } from '../lib/auth/types'
 import { OFFLINE_LOAD_MESSAGE } from '../lib/network'
 import { useAsyncData } from '../lib/useAsyncData'
 import { OfflineBanner } from './OfflineBanner'
+import { AlertsPage } from '../app/alerts/AlertsPage'
+import { AlertsProvider } from '../lib/alerts/AlertsProvider'
 
 let online = true
 function setOnline(value: boolean) {
@@ -107,6 +109,18 @@ describe('starting the installed app offline', () => {
     expect(await screen.findByText('Maria Santos (resident)')).toBeInTheDocument()
   })
 
+  it('does not wait for network retries when the device is known to be offline', async () => {
+    saveCachedProfile(profile)
+    online = false
+    const client = fakeClient(() => new Promise(() => {})) // request never settles
+    render(
+      <AuthProvider client={client}>
+        <WhoAmI />
+      </AuthProvider>,
+    )
+    expect(await screen.findByText('Maria Santos (resident)')).toBeInTheDocument()
+  })
+
   it('does not use the cache for a different user or for non-network errors', async () => {
     saveCachedProfile({ ...profile, id: 'someone-else' })
     const client = fakeClient(async () => Promise.reject(new Error('JWT expired')))
@@ -140,5 +154,25 @@ describe('starting the installed app offline', () => {
     )
     await act(async () => screen.getByRole('button', { name: 'Sign out' }).click())
     await waitFor(() => expect(loadCachedProfile('user-1')).toBeNull())
+  })
+})
+
+describe('alerts feed offline', () => {
+  it('says it is offline instead of loading forever', async () => {
+    online = false
+    const channel = { on: () => channel, subscribe: () => channel }
+    const client = {
+      from: () => ({ select: () => new Promise(() => {}) }), // never settles while offline
+      channel: () => channel,
+      removeChannel: async () => 'ok',
+    } as unknown as SupabaseClient
+    render(
+      <AlertsProvider client={client}>
+        <AlertsPage />
+      </AlertsProvider>,
+    )
+    expect(await screen.findByText(OFFLINE_LOAD_MESSAGE)).toBeInTheDocument()
+    expect(screen.getByText('○ Offline')).toBeInTheDocument()
+    expect(screen.queryByText('Loading alerts…')).not.toBeInTheDocument()
   })
 })

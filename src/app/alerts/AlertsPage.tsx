@@ -1,6 +1,8 @@
 import { useAlerts } from '../../lib/alerts/AlertsContext'
 import { LEVEL_LABELS, type Alert } from '../../lib/alerts/types'
 import { formatDateTime } from '../../lib/format'
+import { OFFLINE_LOAD_MESSAGE } from '../../lib/network'
+import { useOnlineStatus } from '../../pwa/useOnlineStatus'
 
 export function AlertCard({ alert }: { alert: Alert }) {
   return (
@@ -18,18 +20,23 @@ export function AlertCard({ alert }: { alert: Alert }) {
 
 export function AlertsPage() {
   const { alerts, loading, error, live, reload } = useAlerts()
+  const online = useOnlineStatus()
 
   return (
     <section className="stack">
       <header className="report-header">
         <h1>Alerts</h1>
-        <span className={`live-indicator${live ? ' live-indicator--on' : ''}`} role="status">
-          {live ? '● Live' : '○ Connecting…'}
+        <span className={`live-indicator${live && online ? ' live-indicator--on' : ''}`} role="status">
+          {!online ? '○ Offline' : live ? '● Live' : '○ Connecting…'}
         </span>
       </header>
 
-      {loading && alerts.length === 0 && <p role="status">Loading alerts…</p>}
-      {error && (
+      {!online && alerts.length === 0 && <p className="card">{OFFLINE_LOAD_MESSAGE}</p>}
+      {!online && alerts.length > 0 && (
+        <p className="muted small">Showing the alerts loaded before you went offline. New alerts appear when you reconnect.</p>
+      )}
+      {online && loading && alerts.length === 0 && <p role="status">Loading alerts…</p>}
+      {online && error && (
         <div className="alert alert--error" role="alert">
           <p>{error}</p>
           <button type="button" className="button button--small" onClick={reload}>

@@ -3,6 +3,7 @@ import type { Session, SupabaseClient } from '@supabase/supabase-js'
 import { supabase } from '../supabaseClient'
 import { isRetryableError } from '../network'
 import { fetchProfile } from './api'
+import { useOnlineStatus } from '../../pwa/useOnlineStatus'
 import { clearCachedProfile, loadCachedProfile, saveCachedProfile } from './profileCache'
 import { AuthContext, type AuthState } from './AuthContext'
 import type { Profile } from './types'
@@ -46,6 +47,10 @@ export function AuthProvider({
   }, [client])
 
   const userId = session?.user.id ?? null
+  const online = useOnlineStatus()
+  // Profile saved on this device; used at once when starting offline instead
+  // of waiting for the network requests to time out.
+  const cachedProfile = useMemo(() => (userId ? loadCachedProfile(userId) : null), [userId])
 
   useEffect(() => {
     if (!client || !userId) return
@@ -85,7 +90,9 @@ export function AuthProvider({
   const refreshProfile = useCallback(() => setReloadKey((k) => k + 1), [])
 
   const value = useMemo<AuthState>(() => {
-    const current = profileResult && profileResult.userId === userId ? profileResult : null
+    const fetched = profileResult && profileResult.userId === userId ? profileResult : null
+    const current =
+      fetched ?? (!online && cachedProfile && userId ? { userId, profile: cachedProfile, error: null } : null)
     let status: AuthState['status']
     if (!sessionLoaded) status = 'loading'
     else if (!session) status = 'signedOut'
@@ -101,7 +108,7 @@ export function AuthProvider({
       signOut,
       refreshProfile,
     }
-  }, [client, profileResult, refreshProfile, session, sessionLoaded, signOut, userId])
+  }, [cachedProfile, client, online, profileResult, refreshProfile, session, sessionLoaded, signOut, userId])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

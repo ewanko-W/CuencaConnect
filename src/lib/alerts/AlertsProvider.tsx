@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { isRetryableError, OFFLINE_LOAD_MESSAGE } from '../network'
 import { supabase } from '../supabaseClient'
 import { AlertsContext, type AlertsState } from './AlertsContext'
 import { sortAlerts, type Alert } from './types'
@@ -9,9 +10,13 @@ const ALERT_COLUMNS = 'id, title, body, level, scope, starts_at, expires_at'
 type FetchResult = { alerts: Alert[]; error: null } | { alerts: null; error: string }
 
 async function fetchAlerts(client: SupabaseClient): Promise<FetchResult> {
-  const { data, error } = await client.from('alerts').select(ALERT_COLUMNS)
-  if (error) return { alerts: null, error: error.message }
-  return { alerts: sortAlerts(data as Alert[]), error: null }
+  try {
+    const { data, error } = await client.from('alerts').select(ALERT_COLUMNS)
+    if (error) return { alerts: null, error: isRetryableError(error) ? OFFLINE_LOAD_MESSAGE : error.message }
+    return { alerts: sortAlerts(data as Alert[]), error: null }
+  } catch (err) {
+    return { alerts: null, error: isRetryableError(err) ? OFFLINE_LOAD_MESSAGE : 'Could not load alerts.' }
+  }
 }
 
 /**
