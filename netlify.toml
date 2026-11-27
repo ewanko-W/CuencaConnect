@@ -1,0 +1,46 @@
+# Netlify deployment (free tier, automatic HTTPS). See README: "Deploy for
+# testing on phones". Environment variables (VITE_SUPABASE_URL,
+# VITE_SUPABASE_ANON_KEY) are set in the Netlify dashboard, never here.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app: every route is served by index.html (the service worker
+# does the same offline).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Only this site's scripts; data from Supabase; map tiles from OSM.
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://tile.openstreetmap.org; font-src 'self'; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # GPS and camera only for this site; nothing else.
+    Permissions-Policy = "geolocation=(self), camera=(self), microphone=(), payment=(), usb=()"
+
+# The service worker and manifest must always be revalidated so updates reach phones.
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
