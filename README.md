@@ -29,6 +29,28 @@ The full design (schema, RLS outline, routes, and build phases) is in [`docs/imp
    npm run dev
    ```
 
+## Demo accounts (local only, created by `supabase/seed.sql`)
+All three accounts use the password `CuencaDemo2026!`. They are fictitious and must not be used on a hosted project.
+
+| Email | Role | Area |
+|---|---|---|
+| `resident@example.test` | resident (unverified) | `/app` |
+| `bfp.staff@example.test` | office_staff (BFP) | `/office` |
+| `admin@example.test` | admin | `/admin` |
+
+New residents register at `/app/register`. Admins and office staff are created manually; see [`docs/provisioning-staff.md`](docs/provisioning-staff.md).
+
+## Installing the PWA on a phone
+The service worker is built only for production; it is disabled in `npm run dev`. Browsers also install PWAs only over HTTPS, with `localhost` as the one exception.
+
+1. Run `npm run build`, then `npm run preview`.
+2. On a desktop, open `http://localhost:4173/app` in Chrome or Edge and use the install icon in the address bar.
+3. On a phone, the app must be served over HTTPS. Either deploy the `dist/` folder to an HTTPS host (Netlify, Vercel, or Cloudflare Pages), or expose the preview server through an HTTPS tunnel. Then:
+   - **Android (Chrome):** tap **Install app** on the home screen, or use the menu and choose **Install app**.
+   - **iOS (Safari):** tap **Share**, then **Add to Home Screen**.
+
+The installed app opens at `/app` in standalone mode. The admin and office areas open in the browser.
+
 ## Commands
 | Command | Purpose |
 |---|---|

@@ -1,18 +1,11 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { SidebarLayout } from '../components/SidebarLayout'
 
-/** Desktop-first admin shell with a side navigation. */
 export function AdminLayout() {
   return (
-    <div className="layout layout--admin">
-      <nav className="side-nav" aria-label="Admin navigation">
-        <span className="brand">CuencaConnect Admin</span>
-        <NavLink to="/admin" end>
-          Overview
-        </NavLink>
-      </nav>
-      <main className="content">
-        <Outlet />
-      </main>
-    </div>
+    <SidebarLayout
+      title="CuencaConnect Admin"
+      label="Admin navigation"
+      links={[{ to: '/admin', label: 'Overview', end: true }]}
+    />
   )
 }
