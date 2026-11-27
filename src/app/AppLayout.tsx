@@ -4,6 +4,7 @@ import { AlertsProvider } from '../lib/alerts/AlertsProvider'
 import { useAuth } from '../lib/auth/AuthContext'
 import { useOutbox } from '../lib/reports/OutboxContext'
 import { OutboxProvider } from '../lib/reports/OutboxProvider'
+import { OfflineBanner } from '../pwa/OfflineBanner'
 
 /** Mobile-first resident shell: top bar plus bottom navigation. */
 export function AppLayout() {
@@ -37,6 +38,7 @@ function AppShell() {
           </Link>
         </nav>
       </header>
+      <OfflineBanner context="resident" />
       <main className="content">
         <Outlet />
       </main>

@@ -71,6 +71,9 @@ export function friendlyAuthError(message: string): string {
   if (/invalid login credentials/i.test(message)) {
     return 'Incorrect email or password.'
   }
+  if (/password should|weak password|at least one character/i.test(message)) {
+    return 'Use at least 8 characters with both letters and numbers.'
+  }
   if (/email not confirmed/i.test(message)) {
     return 'Please confirm your email address first, then sign in.'
   }

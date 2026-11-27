@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { isRetryableError, OFFLINE_LOAD_MESSAGE } from './network'
 
 export interface AsyncData<T> {
   data: T | null
@@ -30,7 +31,15 @@ export function useAsyncData<T>(load: () => Promise<T>, deps: unknown[]): AsyncD
       .catch(
         (err: unknown) =>
           active &&
-          setResult((r) => ({ key, data: r.data, error: err instanceof Error ? err.message : 'Something went wrong.' })),
+          setResult((r) => ({
+            key,
+            data: r.data,
+            error: isRetryableError(err)
+              ? OFFLINE_LOAD_MESSAGE
+              : err instanceof Error
+                ? err.message
+                : 'Something went wrong.',
+          })),
       )
     return () => {
       active = false
@@ -40,6 +49,12 @@ export function useAsyncData<T>(load: () => Promise<T>, deps: unknown[]): AsyncD
   }, [key])
 
   const reload = useCallback(() => setReloadCount((n) => n + 1), [])
+
+  // Load again automatically when the connection returns.
+  useEffect(() => {
+    window.addEventListener('online', reload)
+    return () => window.removeEventListener('online', reload)
+  }, [reload])
   const loading = result.key !== key
   return { data: result.data, error: loading ? null : result.error, loading, reload }
 }

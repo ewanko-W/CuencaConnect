@@ -7,6 +7,7 @@ import { useAuth } from '../../lib/auth/AuthContext'
 import { CUENCA_CENTER, isWithinCuenca, type LatLng } from '../../lib/geo/cuenca'
 import { useGeolocation } from '../../lib/geo/useGeolocation'
 import { prepareImage } from '../../lib/reports/image'
+import { validatePhoto } from '../../lib/reports/photoValidation'
 import { useOutbox } from '../../lib/reports/OutboxContext'
 import { submitOrSave } from '../../lib/reports/submitOrSave'
 import { useAsyncData } from '../../lib/useAsyncData'
@@ -59,6 +60,7 @@ function ReportForm() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [savedMessage, setSavedMessage] = useState<string | null>(null)
+  const [photoError, setPhotoError] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
 
   const locateMe = useCallback(() => {
@@ -79,7 +81,10 @@ function ReportForm() {
     const files = Array.from(event.target.files ?? []).slice(0, MAX_PHOTOS - photos.length)
     event.target.value = '' // allow taking the same photo again
     const prepared = await Promise.all(files.map((f) => prepareImage(f)))
-    setPhotos((current) => [...current, ...prepared.map((blob) => ({ blob, url: URL.createObjectURL(blob) }))])
+    const problems = prepared.map(validatePhoto).filter((p): p is string => p !== null)
+    setPhotoError(problems[0] ?? null)
+    const accepted = prepared.filter((blob) => validatePhoto(blob) === null)
+    setPhotos((current) => [...current, ...accepted.map((blob) => ({ blob, url: URL.createObjectURL(blob) }))])
   }
 
   function removePhoto(index: number) {
@@ -211,6 +216,11 @@ function ReportForm() {
             </figure>
           ))}
         </div>
+        {photoError && (
+          <p className="field-error small" role="alert">
+            {photoError}
+          </p>
+        )}
         {photos.length < MAX_PHOTOS && (
           <button type="button" className="button" onClick={() => fileInput.current?.click()}>
             📷 Take photo

@@ -10,6 +10,7 @@ import {
   type RegistrationErrors,
   type RegistrationInput,
 } from '../../lib/auth/validation'
+import { OfflineBanner } from '../../pwa/OfflineBanner'
 
 const EMPTY: RegistrationInput = {
   displayName: '',
@@ -85,6 +86,7 @@ export function RegisterPage() {
       <form className="card form" onSubmit={handleSubmit} noValidate>
         <p className="brand brand--dark">CuencaConnect</p>
         <h1>Create a resident account</h1>
+        <OfflineBanner context="auth" />
 
         <label className="field">
           <span>Display name</span>
@@ -131,7 +133,7 @@ export function RegisterPage() {
         </label>
 
         <label className="field">
-          <span>Password (at least {PASSWORD_MIN_LENGTH} characters)</span>
+          <span>Password (at least {PASSWORD_MIN_LENGTH} characters, letters and numbers)</span>
           <input
             type="password"
             autoComplete="new-password"

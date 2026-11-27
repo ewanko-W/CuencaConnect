@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Session, SupabaseClient } from '@supabase/supabase-js'
 import { supabase } from '../supabaseClient'
+import { isRetryableError } from '../network'
 import { fetchProfile } from './api'
+import { clearCachedProfile, loadCachedProfile, saveCachedProfile } from './profileCache'
 import { AuthContext, type AuthState } from './AuthContext'
 import type { Profile } from './types'
 
@@ -50,23 +52,33 @@ export function AuthProvider({
     let active = true
     fetchProfile(client, userId)
       .then((profile) => {
+        saveCachedProfile(profile)
         if (active) setProfileResult({ userId, profile, error: null })
       })
       .catch((err: unknown) => {
-        if (active) {
-          setProfileResult({
-            userId,
-            profile: null,
-            error: err instanceof Error ? err.message : 'Could not load your profile.',
-          })
-        }
+        if (!active) return
+        // Offline start of the installed app: use the profile saved on this device.
+        const cached = isRetryableError(err) ? loadCachedProfile(userId) : null
+        setProfileResult({
+          userId,
+          profile: cached,
+          error: cached ? null : err instanceof Error ? err.message : 'Could not load your profile.',
+        })
       })
     return () => {
       active = false
     }
   }, [client, userId, reloadKey])
 
+  // Refresh the profile (e.g., a new verification status) when the connection returns.
+  useEffect(() => {
+    const onOnline = () => setReloadKey((k) => k + 1)
+    window.addEventListener('online', onOnline)
+    return () => window.removeEventListener('online', onOnline)
+  }, [])
+
   const signOut = useCallback(async () => {
+    clearCachedProfile()
     if (client) await client.auth.signOut()
   }, [client])
 

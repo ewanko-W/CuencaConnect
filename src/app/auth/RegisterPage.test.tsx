@@ -20,8 +20,8 @@ async function fillForm(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('Display name'), 'Maria Santos')
   await user.selectOptions(await screen.findByLabelText('Barangay'), await screen.findByRole('option', { name: 'Dita' }))
   await user.type(screen.getByLabelText('Email'), 'maria@example.test')
-  await user.type(screen.getByLabelText(/^Password/), 'longenough')
-  await user.type(screen.getByLabelText('Confirm password'), 'longenough')
+  await user.type(screen.getByLabelText(/^Password/), 'longenough1')
+  await user.type(screen.getByLabelText('Confirm password'), 'longenough1')
 }
 
 describe('RegisterPage', () => {
@@ -50,7 +50,7 @@ describe('RegisterPage', () => {
     await waitFor(() =>
       expect(api.signUpResident).toHaveBeenCalledWith({
         email: 'maria@example.test',
-        password: 'longenough',
+        password: 'longenough1',
         displayName: 'Maria Santos',
         barangayId: 6,
       }),

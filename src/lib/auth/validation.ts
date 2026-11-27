@@ -31,8 +31,9 @@ export function validateRegistration(input: RegistrationInput): RegistrationErro
   if (!EMAIL_PATTERN.test(input.email.trim())) {
     errors.email = 'Enter a valid email address.'
   }
-  if (input.password.length < PASSWORD_MIN_LENGTH) {
-    errors.password = `Use at least ${PASSWORD_MIN_LENGTH} characters.`
+  // Matches Supabase Auth: minimum_password_length 8, password_requirements letters_digits.
+  if (input.password.length < PASSWORD_MIN_LENGTH || !/[A-Za-z]/.test(input.password) || !/\d/.test(input.password)) {
+    errors.password = `Use at least ${PASSWORD_MIN_LENGTH} characters with both letters and numbers.`
   }
   if (input.confirmPassword !== input.password) {
     errors.confirmPassword = 'Passwords do not match.'

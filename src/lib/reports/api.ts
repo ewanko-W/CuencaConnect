@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { isRetryableError } from '../network'
 import { supabase } from '../supabaseClient'
 import type {
   MyReport,
@@ -10,19 +11,14 @@ import type {
   VoteType,
 } from './types'
 
+export { isRetryableError }
+
 export const MEDIA_BUCKET = 'report-media'
 const SIGNED_URL_SECONDS = 300
 
 function client(): SupabaseClient {
   if (!supabase) throw new Error('Supabase is not configured.')
   return supabase
-}
-
-/** Errors worth retrying later (no connection), as opposed to rule violations. */
-export function isRetryableError(error: unknown): boolean {
-  if (typeof navigator !== 'undefined' && navigator.onLine === false) return true
-  const message = error instanceof Error ? error.message : String(error)
-  return /failed to fetch|networkerror|network request failed|load failed|fetch failed|timeout|offline/i.test(message)
 }
 
 function fail(message: string): never {
@@ -48,9 +44,18 @@ export async function sendReport(draft: ReportDraft): Promise<string> {
   })
   if (error) fail(error.message)
 
+  // On a retry, skip photos that an earlier attempt already uploaded.
+  const folder = `${draft.userId}/${draft.clientUuid}`
+  const existing = draft.photos.length
+    ? new Set(((await sb.storage.from(MEDIA_BUCKET).list(folder)).data ?? []).map((f) => f.name))
+    : new Set<string>()
+
   for (const [index, photo] of draft.photos.entries()) {
-    const path = `${draft.userId}/${draft.clientUuid}/${index + 1}.jpg`
-    const upload = await sb.storage
+    const fileName = `${index + 1}.jpg`
+    const path = `${folder}/${fileName}`
+    const upload = existing.has(fileName)
+      ? { error: null }
+      : await sb.storage
       .from(MEDIA_BUCKET)
       .upload(path, photo, { contentType: photo.type || 'image/jpeg', upsert: false })
     // A retry may find the file already uploaded; that is fine.

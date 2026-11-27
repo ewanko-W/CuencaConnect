@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { signInWithEmail } from '../../lib/auth/api'
 import { useAuth } from '../../lib/auth/AuthContext'
+import { OfflineBanner } from '../../pwa/OfflineBanner'
 
 export type LoginArea = 'app' | 'admin' | 'office'
 
@@ -41,6 +42,7 @@ export function LoginPage({ area }: { area: LoginArea }) {
       <form className="card form" onSubmit={handleSubmit} noValidate>
         <p className="brand brand--dark">CuencaConnect</p>
         <h1>{TITLES[area]}</h1>
+        <OfflineBanner context="auth" />
 
         {!configured && (
           <p className="alert alert--warning">

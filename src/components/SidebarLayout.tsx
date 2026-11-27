@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../lib/auth/AuthContext'
+import { OfflineBanner } from '../pwa/OfflineBanner'
 
 export interface SidebarLink {
   to: string
@@ -30,6 +31,7 @@ export function SidebarLayout({ title, label, links }: { title: string; label: s
         </div>
       </aside>
       <main className="content">
+        <OfflineBanner context="staff" />
         <Outlet />
       </main>
     </div>
