@@ -7,17 +7,73 @@
 -------------------------------------------------------------------------------
 -- Offices (fictitious contact details)
 -------------------------------------------------------------------------------
-insert into public.offices (id, code, name, hotline, contact_info)
+insert into public.offices (id, code, name, hotline, contact_info, handles_categories)
 overriding system value
 values
-  (1, 'MDRRMO', 'Municipal Disaster Risk Reduction and Management Office', '(043) 000-0001', 'Municipal Hall (sample data)'),
-  (2, 'BFP', 'Bureau of Fire Protection - Cuenca', '(043) 000-0002', 'Sample data'),
-  (3, 'PNP', 'Philippine National Police - Cuenca', '(043) 000-0003', 'Sample data'),
-  (4, 'MHO', 'Municipal Health Office', '(043) 000-0004', 'Sample data'),
-  (5, 'MEO', 'Municipal Engineering Office', '(043) 000-0005', 'Sample data')
+  (1, 'MDRRMO', 'Municipal Disaster Risk Reduction and Management Office', '(043) 000-0001', 'Municipal Hall (sample data)', '{flood,other}'),
+  (2, 'BFP', 'Bureau of Fire Protection - Cuenca', '(043) 000-0002', 'Sample data', '{fire}'),
+  (3, 'PNP', 'Philippine National Police - Cuenca', '(043) 000-0003', 'Sample data', '{crime}'),
+  (4, 'MHO', 'Municipal Health Office', '(043) 000-0004', 'Sample data', '{medical}'),
+  (5, 'MEO', 'Municipal Engineering Office', '(043) 000-0005', 'Sample data', '{road,utilities}'),
+  (6, 'MENRO', 'Municipal Environment and Natural Resources Office', '(043) 000-0006', 'Sample data', '{waste}')
 on conflict (id) do nothing;
 
-select setval(pg_get_serial_sequence('public.offices', 'id'), 5);
+select setval(pg_get_serial_sequence('public.offices', 'id'), 6);
+
+-------------------------------------------------------------------------------
+-- Starter triage keywords (English and Filipino). Admins edit these at
+-- /admin/keywords. Matching is by whole word or phrase, so add variants
+-- (e.g., "flood", "flooding", "flooded").
+-------------------------------------------------------------------------------
+insert into public.keywords (term, lang, category, severity) values
+  -- English
+  ('fire', 'en', 'fire', 'critical'),
+  ('on fire', 'en', 'fire', 'critical'),
+  ('explosion', 'en', 'fire', 'critical'),
+  ('smoke', 'en', 'fire', 'medium'),
+  ('trapped', 'en', 'other', 'critical'),
+  ('landslide', 'en', 'other', 'critical'),
+  ('unconscious', 'en', 'medical', 'critical'),
+  ('not breathing', 'en', 'medical', 'critical'),
+  ('bleeding', 'en', 'medical', 'high'),
+  ('injured', 'en', 'medical', 'high'),
+  ('electrocuted', 'en', 'utilities', 'critical'),
+  ('live wire', 'en', 'utilities', 'high'),
+  ('gunshot', 'en', 'crime', 'critical'),
+  ('stabbing', 'en', 'crime', 'critical'),
+  ('robbery', 'en', 'crime', 'high'),
+  ('accident', 'en', 'road', 'high'),
+  ('flood', 'en', 'flood', 'medium'),
+  ('flooding', 'en', 'flood', 'medium'),
+  ('flooded', 'en', 'flood', 'medium'),
+  ('rising water', 'en', 'flood', 'high'),
+  ('pothole', 'en', 'road', 'low'),
+  ('garbage', 'en', 'waste', 'low'),
+  -- Filipino
+  ('sunog', 'fil', 'fire', 'critical'),
+  ('nasusunog', 'fil', 'fire', 'critical'),
+  ('pagsabog', 'fil', 'fire', 'critical'),
+  ('usok', 'fil', 'fire', 'medium'),
+  ('naipit', 'fil', 'other', 'critical'),
+  ('guho', 'fil', 'other', 'critical'),
+  ('pagguho ng lupa', 'fil', 'other', 'critical'),
+  ('walang malay', 'fil', 'medical', 'critical'),
+  ('hindi makahinga', 'fil', 'medical', 'critical'),
+  ('duguan', 'fil', 'medical', 'high'),
+  ('sugatan', 'fil', 'medical', 'high'),
+  ('nakuryente', 'fil', 'utilities', 'critical'),
+  ('nakalaylay na kawad', 'fil', 'utilities', 'high'),
+  ('barilan', 'fil', 'crime', 'critical'),
+  ('sinaksak', 'fil', 'crime', 'critical'),
+  ('nakawan', 'fil', 'crime', 'high'),
+  ('aksidente', 'fil', 'road', 'high'),
+  ('naaksidente', 'fil', 'road', 'high'),
+  ('baha', 'fil', 'flood', 'medium'),
+  ('bumabaha', 'fil', 'flood', 'medium'),
+  ('tumataas ang tubig', 'fil', 'flood', 'high'),
+  ('lubak', 'fil', 'road', 'low'),
+  ('basura', 'fil', 'waste', 'low')
+on conflict (term, lang) do nothing;
 
 -------------------------------------------------------------------------------
 -- Demo accounts (password: CuencaDemo2026!)
@@ -114,23 +170,30 @@ where id in ('00000000-0000-4000-8000-000000000004', '00000000-0000-4000-8000-00
 -- Sample reports (fictitious incidents around the town center)
 -------------------------------------------------------------------------------
 insert into public.reports
-  (id, client_uuid, reporter_id, category, description, lat, lng, gps_accuracy_m, location_source, created_at)
+  (id, client_uuid, reporter_id, category, description, lat, lng, gps_accuracy_m, location_source, created_at, barangay_id)
 values
   ('a0000000-0000-4000-8000-000000000001', 'c0000000-0000-4000-8000-000000000001',
    '00000000-0000-4000-8000-000000000005', 'flood',
-   'Knee-deep flooding on the road near the chapel after heavy rain.', 13.9112, 121.0478, 12, 'gps', now() - interval '3 hours'),
+   'Knee-deep flooding on the road near the chapel after heavy rain.', 13.9112, 121.0478, 12, 'gps', now() - interval '3 hours', 9),
   ('a0000000-0000-4000-8000-000000000002', 'c0000000-0000-4000-8000-000000000002',
    '00000000-0000-4000-8000-000000000005', 'road',
-   'Large pothole in the middle of the lane, motorcycles swerving.', 13.9061, 121.0547, 20, 'adjusted', now() - interval '1 day'),
+   'Large pothole in the middle of the lane, motorcycles swerving.', 13.9061, 121.0547, 20, 'adjusted', now() - interval '1 day', 15),
   ('a0000000-0000-4000-8000-000000000003', 'c0000000-0000-4000-8000-000000000003',
    '00000000-0000-4000-8000-000000000005', 'utilities',
-   'Streetlight has been out for three nights on the corner.', 13.9135, 121.0525, 15, 'gps', now() - interval '2 days'),
+   'Streetlight has been out for three nights on the corner.', 13.9135, 121.0525, 15, 'gps', now() - interval '2 days', 14),
   ('a0000000-0000-4000-8000-000000000004', 'c0000000-0000-4000-8000-000000000004',
    '00000000-0000-4000-8000-000000000004', 'waste',
-   'Uncollected garbage piling up beside the waiting shed.', 13.9088, 121.0499, 8, 'gps', now() - interval '5 hours'),
+   'Uncollected garbage piling up beside the waiting shed.', 13.9088, 121.0499, 8, 'gps', now() - interval '5 hours', 6),
   ('a0000000-0000-4000-8000-000000000005', 'c0000000-0000-4000-8000-000000000005',
    '00000000-0000-4000-8000-000000000004', 'road',
-   'Fallen tree branch blocking half of the road, already cleared.', 13.9040, 121.0580, 10, 'gps', now() - interval '4 days')
+   'Fallen tree branch blocking half of the road, already cleared.', 13.9040, 121.0580, 10, 'gps', now() - interval '4 days', 16),
+  -- Unrouted critical reports in Filipino (triaged by the keyword lists).
+  ('a0000000-0000-4000-8000-000000000006', 'c0000000-0000-4000-8000-000000000006',
+   '00000000-0000-4000-8000-000000000004', 'fire',
+   'May sunog sa likod ng palengke, makapal ang usok.', 13.9079, 121.0521, 9, 'gps', now() - interval '20 minutes', 6),
+  ('a0000000-0000-4000-8000-000000000007', 'c0000000-0000-4000-8000-000000000007',
+   '00000000-0000-4000-8000-000000000005', 'medical',
+   'May lalaking walang malay sa tapat ng simbahan.', 13.9101, 121.0509, 11, 'gps', now() - interval '45 minutes', 14)
 on conflict (id) do nothing;
 
 -- Status progression (writes report_status_history through the trigger).

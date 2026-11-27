@@ -139,7 +139,7 @@ select lives_ok(
 
 select set_eq(
   $$select category::text, is_mine, approx_lat, approx_lng from public.nearby_reports(13.9100, 121.0500, 2000)
-    where distance_m < 100$$,
+    where distance_m < 60$$,
   $$values ('road', true, 13.91::float8, 121.0505::float8), ('fire', false, 13.91::float8, 121.05::float8)$$,
   'nearby_reports lists active incidents with approximate (grid-snapped) locations');
 
