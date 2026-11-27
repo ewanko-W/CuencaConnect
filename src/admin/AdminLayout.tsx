@@ -5,7 +5,12 @@ export function AdminLayout() {
     <SidebarLayout
       title="CuencaConnect Admin"
       label="Admin navigation"
-      links={[{ to: '/admin', label: 'Overview', end: true }]}
+      links={[
+        { to: '/admin/command', label: '🗺️ Command Center' },
+        { to: '/admin/alerts', label: '📢 Alerts' },
+        { to: '/admin/keywords', label: '🔤 Keywords' },
+        { to: '/admin/audit', label: '📜 Audit log' },
+      ]}
     />
   )
 }

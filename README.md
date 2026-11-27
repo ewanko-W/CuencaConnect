@@ -58,6 +58,19 @@ insert into public.alerts (title, body, level, scope, target_barangay_ids)
 values ('Test emergency', 'This is a test alert.', 'emergency', 'barangay', '{6}');
 ```
 
+## Admin Command Center (`/admin`)
+Desktop-first; on tablets the layout stacks and the sidebar becomes a top bar.
+
+| Feature | Route |
+|---|---|
+| Map with pins coloured by priority, filters (category, status, priority, barangay) saved in the URL, a report table sorted by priority, a **critical panel that ignores filters**, and live updates | `/admin/command` |
+| Report detail: triage result, routing to an office (the triage suggestion is preselected), status updates (Received, In progress, Resolved, Reject, Duplicate, Reopen), timeline, routing history | `/admin/command/:id` |
+| Broadcast alerts to all of Cuenca or to selected barangays, with an expiry; deactivate alerts | `/admin/alerts` |
+| Edit the English and Filipino triage keyword lists and test sample text | `/admin/keywords` |
+| Audit log of every admin action (append-only) | `/admin/audit` |
+
+The business rules live in the database: `route_report`, `set_report_status`, the keyword triage trigger, the audit triggers, and RLS.
+
 ## Installing the PWA on a phone
 The service worker is built only for production; it is disabled in `npm run dev`. Browsers also install PWAs only over HTTPS, with `localhost` as the one exception.
 

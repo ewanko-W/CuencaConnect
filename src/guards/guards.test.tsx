@@ -48,9 +48,9 @@ describe('RequireRole: role separation', () => {
     await expectPath(router, '/office')
   })
 
-  it('redirects an admin from the resident app to /admin', async () => {
+  it('redirects an admin from the resident app to the Command Center', async () => {
     const { router } = renderWithAuth('/app', authAs('admin'))
-    await expectPath(router, '/admin')
+    await expectPath(router, '/admin/command')
   })
 
   it('lets a resident into /app with the bottom navigation', async () => {

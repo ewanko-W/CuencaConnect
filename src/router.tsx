@@ -1,5 +1,9 @@
 import { Navigate, type RouteObject } from 'react-router-dom'
-import { AdminHome } from './admin/AdminHome'
+import { AdminAlertsPage } from './admin/alerts/AdminAlertsPage'
+import { AuditPage } from './admin/audit/AuditPage'
+import { AdminReportPage } from './admin/command/AdminReportPage'
+import { CommandPage } from './admin/command/CommandPage'
+import { KeywordsPage } from './admin/keywords/KeywordsPage'
 import { AdminLayout } from './admin/AdminLayout'
 import { AppHome } from './app/AppHome'
 import { AppLayout } from './app/AppLayout'
@@ -56,7 +60,19 @@ export const routes: RouteObject[] = [
   {
     path: '/admin',
     element: <RequireRole allow={['admin']} loginPath="/admin/login" />,
-    children: [{ element: <AdminLayout />, children: [{ index: true, element: <AdminHome /> }] }],
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <Navigate to="/admin/command" replace /> },
+          { path: 'command', element: <CommandPage /> },
+          { path: 'command/:id', element: <AdminReportPage /> },
+          { path: 'alerts', element: <AdminAlertsPage /> },
+          { path: 'keywords', element: <KeywordsPage /> },
+          { path: 'audit', element: <AuditPage /> },
+        ],
+      },
+    ],
   },
 
   // Office inbox

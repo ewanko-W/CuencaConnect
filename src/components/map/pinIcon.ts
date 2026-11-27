@@ -4,7 +4,9 @@ import L from 'leaflet'
  * HTML (divIcon) pins avoid Leaflet's default image markers, whose asset
  * paths break under bundlers, and let each category show its own icon.
  */
-export function pinIcon(symbol: string, variant: 'default' | 'mine' | 'draft' = 'default'): L.DivIcon {
+export type PinVariant = 'default' | 'mine' | 'draft' | 'critical' | 'high' | 'medium' | 'low'
+
+export function pinIcon(symbol: string, variant: PinVariant = 'default'): L.DivIcon {
   return L.divIcon({
     className: `map-pin map-pin--${variant}`,
     html: `<span class="map-pin__body"><span class="map-pin__symbol">${symbol}</span></span>`,

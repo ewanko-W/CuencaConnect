@@ -34,7 +34,10 @@ export function authAs(role: Role | null, overrides: Partial<AuthState> = {}): A
 
 /** Renders the real route table at `path` with a fixed auth state. */
 export function renderWithAuth(path: string, auth: AuthState, state?: unknown) {
-  const router = createMemoryRouter(routes, { initialEntries: [{ pathname: path, state }] })
+  const [pathname, search = ''] = path.split('?')
+  const router = createMemoryRouter(routes, {
+    initialEntries: [{ pathname, search: search ? `?${search}` : '', state }],
+  })
   const utils = render(
     <AuthContext.Provider value={auth}>
       <RouterProvider router={router} />
