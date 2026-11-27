@@ -1,0 +1,4 @@
+-- Seed data for local development.
+-- RULE: simulated data only. No real names, phone numbers, IDs, or emails.
+-- Use fictitious names and the reserved domain example.test.
+-- Seed rows are added from Phase 1 onwards.
