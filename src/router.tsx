@@ -4,7 +4,13 @@ import { AdminLayout } from './admin/AdminLayout'
 import { AppHome } from './app/AppHome'
 import { AppLayout } from './app/AppLayout'
 import { AppProfile } from './app/AppProfile'
+import { AlertsPage } from './app/alerts/AlertsPage'
 import { RegisterPage } from './app/auth/RegisterPage'
+import { DirectoryPage } from './app/directory/DirectoryPage'
+import { NearbyMapPage } from './app/map/NearbyMapPage'
+import { NewReportPage } from './app/report/NewReportPage'
+import { MyReportsPage } from './app/reports/MyReportsPage'
+import { ReportDetailPage } from './app/reports/ReportDetailPage'
 import { LoginPage } from './components/auth/LoginPage'
 import { NotFound } from './components/NotFound'
 import { RedirectIfSignedIn } from './guards/RedirectIfSignedIn'
@@ -34,6 +40,12 @@ export const routes: RouteObject[] = [
         element: <AppLayout />,
         children: [
           { index: true, element: <AppHome /> },
+          { path: 'report', element: <NewReportPage /> },
+          { path: 'reports', element: <MyReportsPage /> },
+          { path: 'reports/:id', element: <ReportDetailPage /> },
+          { path: 'map', element: <NearbyMapPage /> },
+          { path: 'alerts', element: <AlertsPage /> },
+          { path: 'directory', element: <DirectoryPage /> },
           { path: 'profile', element: <AppProfile /> },
         ],
       },

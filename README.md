@@ -34,11 +34,29 @@ All three accounts use the password `CuencaDemo2026!`. They are fictitious and m
 
 | Email | Role | Area |
 |---|---|---|
-| `resident@example.test` | resident (unverified) | `/app` |
+| `resident@example.test` | resident (unverified: alerts and directory only) | `/app` |
+| `verified.resident@example.test` | resident (verified, Barangay Dita) | `/app` |
+| `neighbor@example.test` | resident (verified, Barangay Ibabao) | `/app` |
 | `bfp.staff@example.test` | office_staff (BFP) | `/office` |
 | `admin@example.test` | admin | `/admin` |
 
 New residents register at `/app/register`. Admins and office staff are created manually; see [`docs/provisioning-staff.md`](docs/provisioning-staff.md).
+
+## Resident features (`/app`)
+| Feature | Route | Who can use it |
+|---|---|---|
+| Report form: GPS location with a draggable pin, a camera photo, a category, and a description; saved on the device when offline | `/app/report` | Verified residents |
+| My reports, with unsent drafts (Retry / Delete) and a status timeline | `/app/reports`, `/app/reports/:id` | Verified residents |
+| Nearby active incidents (approximate locations) with **Confirm / Dispute** (one vote per user per report) | `/app/map` | Verified residents |
+| Alerts feed, updated live through Supabase Realtime | `/app/alerts` | All residents |
+| Hotlines and offices directory | `/app/directory` | All residents |
+
+To see Realtime alerts, keep `/app/alerts` open as `verified.resident@example.test` and insert a row in the Supabase SQL editor:
+
+```sql
+insert into public.alerts (title, body, level, scope, target_barangay_ids)
+values ('Test emergency', 'This is a test alert.', 'emergency', 'barangay', '{6}');
+```
 
 ## Installing the PWA on a phone
 The service worker is built only for production; it is disabled in `npm run dev`. Browsers also install PWAs only over HTTPS, with `localhost` as the one exception.

@@ -15,7 +15,7 @@ The repository holds only `CLAUDE.md` (one commit, `b869b89`). CuencaConnect is 
 | Topic | Decision |
 |---|---|
 | Supabase | Develop on the local Supabase CLI (Docker); deploy the same migrations to a free Supabase Cloud project for the demo |
-| Votes | One upvote per **verified** resident per report; it raises the priority score |
+| Votes | **Confirm or Dispute** (revised by the user in the resident-area phase): one vote per **verified** resident per report; a vote can be switched or withdrawn, never duplicated. Disputes never hide reports from admins. |
 | Alerts | Sent to the whole municipality or to selected barangays; readable by unverified users |
 | PWA | Installable, offline app shell, offline report queue, Web Push, and in-app alerts through Realtime |
 | Verification | Register with consent → upload a government ID photo → `pending` → an admin approves or rejects with a reason. The ID number is never stored. ID images are purged 7 days after the decision. |
@@ -88,7 +88,7 @@ CuencaConnect/
 | **reports** | `id`, `client_uuid UNIQUE`, `reporter_id`, `category`, `title`, `description`, `location geography(Point)`, `barangay_id`, `severity`, `is_critical`, `matched_keywords text[]`, **`suggested_office_id`**, `assigned_office_id (null until routed)`, `status`, `vote_count`, `priority_score`, timestamps, `resolved_at` | The location must fall inside the municipal bounding box. GiST index on the location; index on (`status`, `is_critical`, `priority_score`). |
 | **routing_history** | `id`, `report_id`, `from_office_id`, `to_office_id`, `routed_by`, `note`, `created_at` | Append-only |
 | **report_media** | `id`, `report_id`, `storage_path`, `mime_type`, `size_bytes`, `uploaded_by` | At most 3 images, 5 MB each |
-| **report_votes** | PK (`report_id`, `voter_id`), `created_at` | No self-vote; voter must be verified |
+| **report_votes** | PK (`report_id`, `voter_id`), `vote` (`confirm`/`dispute`), `created_at`, `updated_at` | No self-vote; no votes on closed reports; voter must be verified |
 | **alerts** | `id`, `created_by`, `title`, `body`, `level`, `scope`, `target_barangay_ids`, `starts_at`, `expires_at`, `is_active` | `scope = 'barangay'` requires targets |
 | **offices** | `id`, `name`, `hotline`, `contact_info`, `handles_categories[]`, `is_active` | Also serves as the public directory |
 | **keywords** | `id`, `term`, `lang`, `category`, `severity_weight`, `is_critical`, `is_active`, `updated_by`, `updated_at` | UNIQUE (lower(term), lang) |
