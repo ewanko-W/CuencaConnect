@@ -10,17 +10,25 @@ simulated data only.
 
 \## Stack
 
-React + TypeScript + Vite; Supabase (Auth, Postgres + PostGIS, Storage,
+React + TypeScript + Vite (PWA: web manifest and service worker);
 
-Realtime); Leaflet + OpenStreetMap; Vitest.
+Supabase (Auth, Postgres + PostGIS, Storage, Realtime); Leaflet +
+
+OpenStreetMap; Vitest.
 
 
 
 \## Structure
 
-\- /app/\* resident pages, /admin/\* admin pages, shared code in src/
+\- /app/\* resident area: mobile-first, installable PWA
 
-\- supabase/migrations holds every schema change
+\- /admin/\* administrative dashboard: desktop-first
+
+\- All business rules (roles, triage, verification, access control) live in
+
+&#x20; Supabase (migrations, RLS, functions) so a native app can reuse them later.
+
+\- Alerts use in-app realtime updates, not browser push.
 
 
 
