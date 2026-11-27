@@ -45,6 +45,9 @@ export const STATUS_LABELS: Record<ReportStatus, string> = {
 export const STATUS_FLOW: ReportStatus[] = ['submitted', 'routed', 'acknowledged', 'in_progress', 'resolved']
 
 export type VoteType = 'confirm' | 'dispute'
+
+/** Outcome of Confirm/Dispute votes against the thresholds in the database. */
+export type CommunityStatus = 'pending' | 'confirmed' | 'disputed'
 export type LocationSource = 'gps' | 'adjusted' | 'manual'
 
 export interface StatusEvent {
@@ -84,6 +87,8 @@ export interface NearbyReport {
   dispute_count: number
   my_vote: VoteType | null
   is_mine: boolean
+  is_critical: boolean
+  community_status: CommunityStatus
 }
 
 export interface VoteResult {

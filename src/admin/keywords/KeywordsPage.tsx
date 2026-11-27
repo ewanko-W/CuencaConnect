@@ -1,7 +1,23 @@
 import { useState, type FormEvent } from 'react'
 import { SeverityBadge } from '../../components/admin/SeverityBadge'
-import { addKeyword, deleteKeyword, fetchKeywords, previewTriage, updateKeyword } from '../../lib/admin/api'
-import { PRIORITY_LABELS, SEVERITIES, type Keyword, type KeywordLang, type Severity, type TriagePreview } from '../../lib/admin/types'
+import {
+  addKeyword,
+  deleteKeyword,
+  fetchKeywords,
+  fetchThresholds,
+  previewTriage,
+  updateKeyword,
+  updateThresholds,
+} from '../../lib/admin/api'
+import {
+  PRIORITY_LABELS,
+  SEVERITIES,
+  type CommunityThresholds,
+  type Keyword,
+  type KeywordLang,
+  type Severity,
+  type TriagePreview,
+} from '../../lib/admin/types'
 import { CATEGORY_INFO, REPORT_CATEGORIES, type ReportCategory } from '../../lib/reports/types'
 import { useAsyncData } from '../../lib/useAsyncData'
 
@@ -92,7 +108,10 @@ export function KeywordsPage() {
           </div>
         </section>
 
-        <TriageTester />
+        <div className="stack">
+          <TriageTester />
+          <ThresholdsCard />
+        </div>
       </div>
     </section>
   )
@@ -258,6 +277,83 @@ function TriageTester() {
           <dd>{result.suggested_office_name ?? 'None'}</dd>
         </dl>
       )}
+    </form>
+  )
+}
+
+export function ThresholdsCard() {
+  const current = useAsyncData(fetchThresholds, [])
+  return current.data ? (
+    <ThresholdsForm key={current.data.updated_at} initial={current.data} onSaved={current.reload} />
+  ) : (
+    <section className="card">
+      <h2>Community verification</h2>
+      <p className="muted small">{current.error ?? 'Loading…'}</p>
+    </section>
+  )
+}
+
+function ThresholdsForm({ initial, onSaved }: { initial: CommunityThresholds; onSaved: () => void }) {
+  const [values, setValues] = useState({
+    min_confirms: initial.min_confirms,
+    min_disputes: initial.min_disputes,
+    dominance_ratio: Number(initial.dominance_ratio),
+  })
+  const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  async function submit(event: FormEvent) {
+    event.preventDefault()
+    setBusy(true)
+    setMessage(null)
+    try {
+      await updateThresholds(values)
+      setMessage({ kind: 'success', text: 'Saved. All reports were re-evaluated with the new thresholds.' })
+      onSaved()
+    } catch (err) {
+      setMessage({ kind: 'error', text: err instanceof Error ? err.message : 'Not saved.' })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const number = (key: keyof typeof values, label: string, min: number, max: number, step = 1) => (
+    <label className="field">
+      <span>{label}</span>
+      <input
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={values[key]}
+        onChange={(e) => setValues((v) => ({ ...v, [key]: Number(e.target.value) }))}
+        required
+      />
+    </label>
+  )
+
+  return (
+    <form className="card stack" onSubmit={submit} aria-labelledby="thresholds-title">
+      <h2 id="thresholds-title">Community verification</h2>
+      <p className="muted small">
+        A report is <strong>community-confirmed</strong> when it has at least {values.min_confirms} confirmations and{' '}
+        {values.dominance_ratio}× as many confirmations as disputes. It is <strong>disputed</strong> when it has at
+        least {values.min_disputes} disputes and {values.dominance_ratio}× as many disputes as confirmations. Disputed
+        routine reports are hidden from the residents&apos; map; <strong>critical reports are never hidden</strong>.
+      </p>
+      <div className="inline-form">
+        {number('min_confirms', 'Confirmations needed', 1, 100)}
+        {number('min_disputes', 'Disputes needed', 1, 100)}
+        {number('dominance_ratio', 'Ratio', 1, 10, 0.5)}
+      </div>
+      {message && (
+        <p className={`alert alert--${message.kind} small`} role={message.kind === 'error' ? 'alert' : 'status'}>
+          {message.text}
+        </p>
+      )}
+      <button type="submit" className="button button--primary" disabled={busy}>
+        {busy ? 'Saving…' : 'Save thresholds'}
+      </button>
     </form>
   )
 }

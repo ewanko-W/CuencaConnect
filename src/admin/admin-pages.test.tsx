@@ -38,6 +38,8 @@ vi.mock('../lib/admin/api', () => ({
   deleteKeyword: vi.fn(async () => {}),
   previewTriage: vi.fn(),
   fetchAuditEntries: vi.fn(async () => []),
+  fetchThresholds: vi.fn(async () => ({ min_confirms: 3, min_disputes: 3, dominance_ratio: 2, updated_at: 't1' })),
+  updateThresholds: vi.fn(async () => {}),
 }))
 
 const BFP = { id: 2, name: 'Bureau of Fire Protection - Cuenca', code: 'BFP' }
@@ -57,6 +59,7 @@ function report(overrides: Partial<AdminReport> = {}): AdminReport {
     lng: 121.0521,
     confirm_count: 0,
     dispute_count: 3,
+    community_status: 'disputed',
     matched_keywords: ['sunog'],
     barangay: { id: 6, name: 'Dita' },
     suggested_office: BFP,
@@ -105,6 +108,8 @@ describe('Command Center', () => {
 
     const panel = await screen.findByRole('region', { name: /critical, open \(1\)/i })
     expect(within(panel).getByText('NOT ROUTED')).toBeInTheDocument()
+    // Disputed by residents, still listed as critical.
+    expect(within(panel).getByText('⚠ Disputed')).toBeInTheDocument()
     expect(await screen.findByText('No reports match these filters.')).toBeInTheDocument()
   })
 
@@ -270,5 +275,25 @@ describe('Keyword lists', () => {
     expect(result).toHaveTextContent('Critical')
     expect(result).toHaveTextContent('Bureau of Fire Protection - Cuenca')
     expect(adminApi.previewTriage).toHaveBeenCalledWith('May sunog dito', 'other')
+  })
+})
+
+describe('Community verification thresholds', () => {
+  it('shows the current thresholds and saves new ones', async () => {
+    vi.mocked(adminApi.fetchKeywords).mockResolvedValue([])
+    const user = userEvent.setup()
+    renderWithAuth('/admin/keywords', admin())
+
+    const form = await screen.findByRole('form', { name: 'Community verification' })
+    const disputes = within(form).getByRole('spinbutton', { name: 'Disputes needed' })
+    expect(disputes).toHaveValue(3)
+    expect(form).toHaveTextContent(/critical reports are never hidden/i)
+
+    await user.clear(disputes)
+    await user.type(disputes, '5')
+    await user.click(within(form).getByRole('button', { name: 'Save thresholds' }))
+
+    expect(adminApi.updateThresholds).toHaveBeenCalledWith({ min_confirms: 3, min_disputes: 5, dominance_ratio: 2 })
+    expect(await within(form).findByRole('status')).toHaveTextContent(/re-evaluated/i)
   })
 })

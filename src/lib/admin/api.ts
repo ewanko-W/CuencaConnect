@@ -10,6 +10,7 @@ import type {
   AdminReportDetail,
   AlertInput,
   AuditEntry,
+  CommunityThresholds,
   Keyword,
   KeywordLang,
   ReportFilters,
@@ -29,7 +30,7 @@ function check<T>(result: { data: T | null; error: { message: string } | null })
 }
 
 const REPORT_COLUMNS = `id, category, description, status, severity, is_critical, priority_score, created_at,
-  lat, lng, confirm_count, dispute_count, matched_keywords,
+  lat, lng, confirm_count, dispute_count, community_status, matched_keywords,
   barangay:barangays (id, name),
   suggested_office:offices!reports_suggested_office_id_fkey (id, name, code),
   assigned_office:offices!reports_assigned_office_id_fkey (id, name, code)`
@@ -194,6 +195,24 @@ export async function deleteKeyword(id: number): Promise<void> {
 export async function previewTriage(text: string, category: ReportCategory): Promise<TriagePreview> {
   const rows = check(await client().rpc('preview_triage', { p_text: text, p_category: category })) as TriagePreview[]
   return rows[0]
+}
+
+// ---------- Community verification thresholds ----------
+
+export async function fetchThresholds(): Promise<CommunityThresholds> {
+  return check(
+    await client()
+      .from('community_thresholds')
+      .select('min_confirms, min_disputes, dominance_ratio, updated_at')
+      .single(),
+  ) as CommunityThresholds
+}
+
+/** Statuses of all reports are recomputed by the database; the change is audited. */
+export async function updateThresholds(
+  values: Pick<CommunityThresholds, 'min_confirms' | 'min_disputes' | 'dominance_ratio'>,
+): Promise<void> {
+  check(await client().from('community_thresholds').update(values).eq('id', true))
 }
 
 // ---------- Audit ----------

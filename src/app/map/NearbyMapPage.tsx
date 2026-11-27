@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Marker } from 'react-leaflet'
 import { BaseMap } from '../../components/map/BaseMap'
 import { pinIcon } from '../../components/map/pinIcon'
+import { CommunityBadge, DisputedCriticalNote } from '../../components/reports/CommunityBadge'
 import { StatusBadge } from '../../components/reports/StatusBadge'
 import { VoteButtons } from '../../components/reports/VoteButtons'
 import { VerificationGate } from '../../components/VerificationGate'
@@ -101,7 +102,11 @@ function NearbyMap() {
                       {r.is_mine && ' · Your report'}
                     </span>
                   </span>
-                  <StatusBadge status={r.status} />
+                  <span className="badge-row">
+                    {r.is_critical && <span className="badge badge--sev-critical">Critical</span>}
+                    <CommunityBadge status={r.community_status} />
+                    <StatusBadge status={r.status} />
+                  </span>
                 </button>
               </li>
             ))}
@@ -132,10 +137,15 @@ export function IncidentCard({
           ✕
         </button>
       </header>
-      <p className="muted small">
-        <StatusBadge status={report.status} /> · {formatDistance(report.distance_m)} away · reported{' '}
-        {formatRelative(report.created_at)}
+      <p className="badge-row">
+        {report.is_critical && <span className="badge badge--sev-critical">Critical</span>}
+        <StatusBadge status={report.status} />
+        <CommunityBadge status={report.community_status} />
       </p>
+      <p className="muted small">
+        {formatDistance(report.distance_m)} away · reported {formatRelative(report.created_at)}
+      </p>
+      {report.is_critical && report.community_status === 'disputed' && <DisputedCriticalNote />}
       <p className="small">Have you seen this? Your vote helps responders prioritize.</p>
       <VoteButtons
         reportId={report.id}

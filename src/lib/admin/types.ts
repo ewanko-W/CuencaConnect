@@ -1,5 +1,5 @@
 import type { AlertLevel } from '../alerts/types'
-import type { ReportCategory, ReportStatus, StatusEvent } from '../reports/types'
+import type { CommunityStatus, ReportCategory, ReportStatus, StatusEvent } from '../reports/types'
 
 export type Severity = 'low' | 'medium' | 'high' | 'critical'
 export const SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low']
@@ -31,6 +31,7 @@ export interface AdminReport {
   lng: number
   confirm_count: number
   dispute_count: number
+  community_status: CommunityStatus
   matched_keywords: string[]
   barangay: { id: number; name: string } | null
   suggested_office: OfficeRef | null
@@ -121,4 +122,11 @@ export interface AuditEntry {
   new_data: Record<string, unknown> | null
   actor_name: string | null
   actor_role: string | null
+}
+
+export interface CommunityThresholds {
+  min_confirms: number
+  min_disputes: number
+  dominance_ratio: number
+  updated_at: string
 }

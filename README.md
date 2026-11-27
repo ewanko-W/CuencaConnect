@@ -37,6 +37,7 @@ All three accounts use the password `CuencaDemo2026!`. They are fictitious and m
 | `resident@example.test` | resident (unverified: alerts and directory only) | `/app` |
 | `verified.resident@example.test` | resident (verified, Barangay Dita) | `/app` |
 | `neighbor@example.test` | resident (verified, Barangay Ibabao) | `/app` |
+| `ana.demo@example.test`, `jose.demo@example.test`, `liza.demo@example.test` | residents (verified; their votes demonstrate the community statuses) | `/app` |
 | `bfp.staff@example.test` | office_staff (BFP) | `/office` |
 | `admin@example.test` | admin | `/admin` |
 
@@ -68,6 +69,8 @@ Desktop-first; on tablets the layout stacks and the sidebar becomes a top bar.
 | Broadcast alerts to all of Cuenca or to selected barangays, with an expiry; deactivate alerts | `/admin/alerts` |
 | Edit the English and Filipino triage keyword lists and test sample text | `/admin/keywords` |
 | Audit log of every admin action (append-only) | `/admin/audit` |
+
+How triage and community verification work, and why: [`docs/triage-and-community-verification.md`](docs/triage-and-community-verification.md).
 
 The business rules live in the database: `route_report`, `set_report_status`, the keyword triage trigger, the audit triggers, and RLS.
 

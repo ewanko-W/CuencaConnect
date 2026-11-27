@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { SeverityBadge } from '../../components/admin/SeverityBadge'
 import { BaseMap } from '../../components/map/BaseMap'
 import { pinIcon } from '../../components/map/pinIcon'
+import { CommunityBadge } from '../../components/reports/CommunityBadge'
 import { StatusBadge } from '../../components/reports/StatusBadge'
 import { StatusTimeline } from '../../components/reports/StatusTimeline'
 import { fetchActiveOffices, fetchAdminReport, routeReport, setReportStatus } from '../../lib/admin/api'
@@ -64,7 +65,11 @@ export function AdminReportPage() {
                   </dd>
                   <dt>Community</dt>
                   <dd>
-                    👍 {r.confirm_count} confirmed · 👎 {r.dispute_count} disputed
+                    👍 {r.confirm_count} confirmed · 👎 {r.dispute_count} disputed{' '}
+                    <CommunityBadge status={r.community_status} showPending />
+                    {r.is_critical && r.community_status === 'disputed' && (
+                      <p className="small text-critical">Disputed, but kept at critical priority: disputes never hide or downgrade critical reports.</p>
+                    )}
                   </dd>
                   <dt>Keywords</dt>
                   <dd>

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FilterBar } from '../../components/admin/FilterBar'
 import { ReportsMap } from '../../components/admin/ReportsMap'
 import { SeverityBadge } from '../../components/admin/SeverityBadge'
+import { CommunityBadge } from '../../components/reports/CommunityBadge'
 import { StatusBadge } from '../../components/reports/StatusBadge'
 import { fetchAdminReports, fetchOpenCriticalReports, subscribeToReports } from '../../lib/admin/api'
 import { filtersFromSearch, filtersToSearch } from '../../lib/admin/filters'
@@ -34,6 +35,7 @@ export function CriticalPanel({ reports }: { reports: AdminReport[] }) {
               </strong>
               <span>{r.barangay?.name ?? 'Barangay not set'}</span>
               <span>{r.assigned_office ? `Routed to ${r.assigned_office.code}` : 'NOT ROUTED'}</span>
+              <CommunityBadge status={r.community_status} />
               <span>{formatRelative(r.created_at)}</span>
             </Link>
           </li>
@@ -123,7 +125,10 @@ export function CommandPage() {
                     </div>
                   </td>
                   <td>
-                    <StatusBadge status={r.status} />
+                    <div className="badge-stack">
+                      <StatusBadge status={r.status} />
+                      <CommunityBadge status={r.community_status} />
+                    </div>
                   </td>
                   <td className="small">{officeLabel(r)}</td>
                 </tr>
