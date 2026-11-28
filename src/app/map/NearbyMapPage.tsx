@@ -10,7 +10,7 @@ import { VoteButtons } from '../../components/reports/VoteButtons'
 import { VerificationGate } from '../../components/VerificationGate'
 import { formatRelative } from '../../lib/format'
 import { CUENCA_CENTER, formatDistance, isWithinCuenca, type LatLng } from '../../lib/geo/cuenca'
-import { useGeolocation } from '../../lib/geo/useGeolocation'
+import { isUsableFix, useGeolocation } from '../../lib/geo/useGeolocation'
 import { fetchNearbyReports } from '../../lib/reports/api'
 import { CATEGORY_INFO, type NearbyReport, type VoteResult } from '../../lib/reports/types'
 import { useAsyncData } from '../../lib/useAsyncData'
@@ -34,7 +34,7 @@ function NearbyMap() {
   const [overrides, setOverrides] = useState<Record<string, VoteResult>>({})
 
   // Outside Cuenca (e.g., testing elsewhere): use the town center instead.
-  const center: LatLng = fix && isWithinCuenca(fix) ? { lat: fix.lat, lng: fix.lng } : CUENCA_CENTER
+  const center: LatLng = isUsableFix(fix) && isWithinCuenca(fix) ? { lat: fix.lat, lng: fix.lng } : CUENCA_CENTER
 
   const { data, error, loading, reload } = useAsyncData(
     () => fetchNearbyReports(center.lat, center.lng, RADIUS_M),

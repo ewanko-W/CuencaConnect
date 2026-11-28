@@ -5,6 +5,22 @@ export interface GpsFix extends LatLng {
   accuracy: number
 }
 
+/**
+ * Fixes less precise than this (in meters) are treated as approximate.
+ * Desktops and phones without GPS often report a network-based location
+ * with an accuracy of several kilometers, which must not become a pin.
+ */
+export const MAX_USABLE_ACCURACY_M = 500
+
+export function isUsableFix(fix: GpsFix | null): fix is GpsFix {
+  return fix !== null && Number.isFinite(fix.accuracy) && fix.accuracy <= MAX_USABLE_ACCURACY_M
+}
+
+/** "about 50 km" / "about 800 m" for messages. */
+export function describeAccuracy(meters: number): string {
+  return meters >= 1000 ? `about ${Math.round(meters / 1000)} km` : `about ${Math.round(meters)} m`
+}
+
 export type GeoState =
   | { status: 'idle' }
   | { status: 'locating' }

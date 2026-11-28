@@ -71,3 +71,36 @@ describe('NewReportPage', () => {
     await waitFor(async () => expect(await listDrafts('user-resident')).toHaveLength(1))
   })
 })
+
+function mockGeolocation(accuracy: number) {
+  Object.defineProperty(navigator, 'geolocation', {
+    configurable: true,
+    value: {
+      getCurrentPosition: (success: PositionCallback) =>
+        success({ coords: { latitude: 13.9094, longitude: 121.0503, accuracy } } as GeolocationPosition),
+    },
+  })
+}
+
+describe('NewReportPage location accuracy', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, 'geolocation')
+  })
+
+  it('uses a precise GPS fix as the pin', async () => {
+    mockGeolocation(12)
+    renderWithAuth('/app/report', verifiedResident())
+    expect(await screen.findByText(/GPS location \(accuracy about 12 m\)/)).toBeInTheDocument()
+  })
+
+  it('does not place the pin from an approximate fix (e.g., a desktop with ~50 km accuracy)', async () => {
+    mockGeolocation(50000)
+    const user = userEvent.setup()
+    renderWithAuth('/app/report', verifiedResident())
+    expect(await screen.findByText(/only an approximate location \(about 50 km\)/)).toBeInTheDocument()
+    expect(screen.queryByText(/GPS location/)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Send report' }))
+    expect(screen.getByText(/set the location of the incident/i)).toBeInTheDocument()
+  })
+})

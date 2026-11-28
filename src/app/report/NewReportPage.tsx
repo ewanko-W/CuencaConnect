@@ -7,7 +7,7 @@ import { VerificationGate } from '../../components/VerificationGate'
 import { fetchBarangays } from '../../lib/auth/api'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { CUENCA_CENTER, isWithinCuenca, type LatLng } from '../../lib/geo/cuenca'
-import { useGeolocation } from '../../lib/geo/useGeolocation'
+import { describeAccuracy, isUsableFix, useGeolocation } from '../../lib/geo/useGeolocation'
 import { prepareImage } from '../../lib/reports/image'
 import { validatePhoto } from '../../lib/reports/photoValidation'
 import { useOutbox } from '../../lib/reports/OutboxContext'
@@ -49,7 +49,10 @@ function ReportForm() {
   const [barangayId, setBarangayId] = useState<number | null>(profile?.barangay_id ?? null)
   const outbox = useOutbox()
   const navigate = useNavigate()
-  const { state: geo, locate, fix: gpsFix } = useGeolocation({ auto: true })
+  const { state: geo, locate, fix: rawFix } = useGeolocation({ auto: true })
+  // An approximate (network-based) fix is shown as a hint, never used as the pin.
+  const gpsFix = isUsableFix(rawFix) ? rawFix : null
+  const approximateFix = rawFix && !gpsFix ? rawFix : null
 
   // The pin follows the GPS fix until the user drags it or taps the map.
   const [manualLocation, setManualLocation] = useState<LatLng | null>(null)
@@ -164,6 +167,12 @@ function ReportForm() {
         <div className="location-status" aria-live="polite">
           {geo.status === 'locating' && <p className="muted small">Finding your location…</p>}
           {geo.status === 'error' && <p className="alert alert--warning small">{geo.message}</p>}
+          {approximateFix && !manualLocation && (
+            <p className="alert alert--warning small">
+              Your device gave only an approximate location ({describeAccuracy(approximateFix.accuracy)}). Tap the map
+              or drag the pin to where the incident is.
+            </p>
+          )}
           {location && (
             <p className="muted small">
               {locationSource === 'gps' && gpsFix
