@@ -6,13 +6,20 @@ simulated data only.
 
 ## Stack
 
-React + TypeScript + Vite; Supabase (Auth, Postgres + PostGIS, Storage,
-Realtime, Edge Functions, pg_cron); Leaflet + OpenStreetMap; Vitest; pgTAP.
+React + TypeScript + Vite (PWA: web manifest and service worker);
+Supabase (Auth, Postgres + PostGIS, Storage, Realtime, Edge Functions);
+Leaflet + OpenStreetMap; lucide-react icons; Vitest; pgTAP.
 
 ## Structure
 
-- /app/* resident PWA, /admin/* admin command center, /office/* office
-  inbox; shared code in src/
+- /app/* resident area: mobile-first, installable PWA
+- /admin/* administrative dashboard (Command Center): desktop-first,
+  usable on tablets
+- /office/* office dashboard for responding offices
+- Shared code in src/
+- All business rules (roles, triage, verification, routing, access control)
+  live in Supabase (migrations, RLS, functions) so a native app can reuse
+  them later.
 - supabase/migrations holds every schema change
 - supabase/tests holds pgTAP tests; supabase/functions holds Edge Functions
 - The approved implementation plan is in docs/implementation-plan.md
@@ -49,9 +56,18 @@ Realtime, Edge Functions, pg_cron); Leaflet + OpenStreetMap; Vitest; pgTAP.
 - Keyword triage uses editable English and Filipino keyword lists
   stored in the database.
 
+### Alerts
+- Alerts use realtime in-app updates and Web Push, targeted by barangay.
+  Users' real-time device location is never stored or tracked.
+
 ### Security, privacy, and UI
 - Never commit secrets. Use .env.local and keep .env.example updated.
 - Mobile-first UI. Geolocation needs HTTPS.
+- No emojis in the UI. Use lucide-react icons, each with a visible text
+  label or an aria-label (decorative icons are aria-hidden).
+- The active tab or page is always highlighted in every navigation bar
+  (NavLink active state and aria-current="page").
+- Text wraps inside its container at 360 px, 768 px, and 1280 px widths.
 - Data Privacy Act: collect only what is needed. No real personal data
   in seed data.
 
@@ -64,5 +80,5 @@ npm run dev | npm run test | npm run lint | npm run build | npm run test:db
 
 ## Workflow
 
-Plan first. Run tests and lint before each commit. Small commits with
-descriptive messages.
+Plan first. Before each commit, run npm run test, npm run lint,
+npm run build, and npm run test:db. Small commits with descriptive messages.
