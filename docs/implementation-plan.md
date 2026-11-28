@@ -259,3 +259,17 @@ Edge Functions get Deno unit tests: signed-URL expiry is 60 s, a view writes an 
 - A verified resident remains verified unless an admin revokes the status, which is logged.
 - Barangay boundaries are simplified polygons.
 - English is the default UI language.
+
+---
+
+## Revision 3: Batches 1–6 (approved 2026-11-28)
+The approved plan for the next six batches is in [`batch-plan.md`](batch-plan.md): UI fixes, English and Filipino, multiple categories and video, routing to multiple offices, the office dashboard, and alerts with Web Push and a barangay-based `nearby_reports`.
+
+| Batch | Status |
+|---|---|
+| 1. UI fixes: lucide icons instead of emojis, highlighted active navigation, text wrapping at 360/768/1280 px, approximate-GPS handling | Done |
+| 2. English and Filipino (react-i18next, `profiles.language`) | Pending |
+| 3. Multiple categories and video evidence | Pending |
+| 4. Routing to multiple offices (`report_routes`) | Pending |
+| 5. Office dashboard | Pending |
+| 6. Alerts, Web Push, privacy notice v3, `nearby_reports` | Pending |

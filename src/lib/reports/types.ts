@@ -17,7 +17,8 @@ export const CATEGORY_INFO: Record<ReportCategory, { label: string; filipino: st
   medical: { label: 'Medical', filipino: 'Medikal' },
   crime: { label: 'Crime', filipino: 'Krimen' },
   road: { label: 'Road', filipino: 'Daan' },
-  utilities: { label: 'Utilities', filipino: 'Kuryente/Tubig' },
+  // \u200b (zero-width space) lets the label wrap after the slash on narrow screens.
+  utilities: { label: 'Utilities', filipino: 'Kuryente/\u200bTubig' },
   waste: { label: 'Waste', filipino: 'Basura' },
   other: { label: 'Other', filipino: 'Iba pa' },
 }

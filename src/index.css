@@ -1379,7 +1379,7 @@ h2 {
 
 .bottom-nav__label {
   line-height: 1.15;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .bottom-nav a.active {
@@ -1456,7 +1456,7 @@ h3,
 .badge,
 .chip,
 dd {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .badge {
@@ -1471,7 +1471,7 @@ fieldset > legend {
   margin: 0 0 0.5rem;
   padding: 0;
   font-weight: 700;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 fieldset > legend + * {
@@ -1508,7 +1508,7 @@ fieldset > legend + * {
 
 .category-option__text {
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .details dd,
@@ -1550,4 +1550,19 @@ fieldset > legend + * {
   .data-table td {
     padding: 0.5rem;
   }
+}
+
+/* Keep absolutely positioned content (e.g., visually hidden header labels)
+   inside the scrolling table instead of widening the page. */
+.table-wrap {
+  position: relative;
+}
+
+/* Badges inside data tables stay on one line; the table scrolls instead. */
+.data-table .badge {
+  white-space: nowrap;
+}
+
+.badge-stack {
+  align-items: flex-start;
 }
