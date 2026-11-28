@@ -1,3 +1,4 @@
+import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { useState } from 'react'
 import { castVote, withdrawVote } from '../../lib/reports/api'
 import type { VoteResult, VoteType } from '../../lib/reports/types'
@@ -47,7 +48,7 @@ export function VoteButtons({
           disabled={busy || Boolean(disabledReason)}
           onClick={() => void choose('confirm')}
         >
-          👍 Confirm <span className="vote__count">{result.confirm_count}</span>
+          <ThumbsUp size={18} aria-hidden="true" /> Confirm <span className="vote__count">{result.confirm_count}</span>
         </button>
         <button
           type="button"
@@ -56,7 +57,7 @@ export function VoteButtons({
           disabled={busy || Boolean(disabledReason)}
           onClick={() => void choose('dispute')}
         >
-          👎 Dispute <span className="vote__count">{result.dispute_count}</span>
+          <ThumbsDown size={18} aria-hidden="true" /> Dispute <span className="vote__count">{result.dispute_count}</span>
         </button>
       </div>
       {disabledReason && <p className="muted small">{disabledReason}</p>}

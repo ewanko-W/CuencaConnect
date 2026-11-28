@@ -1,3 +1,4 @@
+import { Radio, WifiOff } from 'lucide-react'
 import { useAlerts } from '../../lib/alerts/AlertsContext'
 import { LEVEL_LABELS, type Alert } from '../../lib/alerts/types'
 import { formatDateTime } from '../../lib/format'
@@ -26,8 +27,9 @@ export function AlertsPage() {
     <section className="stack">
       <header className="report-header">
         <h1>Alerts</h1>
-        <span className={`live-indicator${live && online ? ' live-indicator--on' : ''}`} role="status">
-          {!online ? '○ Offline' : live ? '● Live' : '○ Connecting…'}
+        <span className={`live-indicator with-icon${live && online ? ' live-indicator--on' : ''}`} role="status">
+          {!online ? <WifiOff size={16} aria-hidden="true" /> : <Radio size={16} aria-hidden="true" />}
+          {!online ? 'Offline' : live ? 'Live' : 'Connecting…'}
         </span>
       </header>
 

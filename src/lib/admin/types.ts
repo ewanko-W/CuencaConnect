@@ -4,7 +4,7 @@ import type { CommunityStatus, ReportCategory, ReportStatus, StatusEvent } from 
 export type Severity = 'low' | 'medium' | 'high' | 'critical'
 export const SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low']
 
-/** "Priority" in the dashboard is the triage severity (critical → low). */
+/** "Priority" in the dashboard is the triage severity (critical down to low). */
 export const PRIORITY_LABELS: Record<Severity, string> = {
   critical: 'Critical',
   high: 'High',

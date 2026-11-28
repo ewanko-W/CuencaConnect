@@ -109,7 +109,7 @@ describe('Command Center', () => {
     const panel = await screen.findByRole('region', { name: /critical, open \(1\)/i })
     expect(within(panel).getByText('NOT ROUTED')).toBeInTheDocument()
     // Disputed by residents, still listed as critical.
-    expect(within(panel).getByText('⚠ Disputed')).toBeInTheDocument()
+    expect(within(panel).getByText('Disputed')).toBeInTheDocument()
     expect(await screen.findByText('No reports match these filters.')).toBeInTheDocument()
   })
 

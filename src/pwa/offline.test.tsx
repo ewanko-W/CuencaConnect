@@ -172,7 +172,7 @@ describe('alerts feed offline', () => {
       </AlertsProvider>,
     )
     expect(await screen.findByText(OFFLINE_LOAD_MESSAGE)).toBeInTheDocument()
-    expect(screen.getByText('○ Offline')).toBeInTheDocument()
+    expect(screen.getByText('Offline')).toBeInTheDocument()
     expect(screen.queryByText('Loading alerts…')).not.toBeInTheDocument()
   })
 })

@@ -50,7 +50,7 @@ export function AdminAlertsPage() {
                     ? 'All of Cuenca'
                     : a.target_barangay_ids.map((id) => names.get(id) ?? `#${id}`).join(', ')}{' '}
                   · {formatDateTime(a.starts_at)}
-                  {a.expires_at && ` → ${formatDateTime(a.expires_at)}`}
+                  {a.expires_at && ` until ${formatDateTime(a.expires_at)}`}
                 </p>
                 {a.is_active && !expired && (
                   <button

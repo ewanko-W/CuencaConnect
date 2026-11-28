@@ -1,3 +1,4 @@
+import { Inbox } from 'lucide-react'
 import { SidebarLayout } from '../components/SidebarLayout'
 
 export function OfficeLayout() {
@@ -5,7 +6,7 @@ export function OfficeLayout() {
     <SidebarLayout
       title="CuencaConnect Office"
       label="Office navigation"
-      links={[{ to: '/office', label: 'Inbox', end: true }]}
+      links={[{ to: '/office', label: 'Inbox', icon: Inbox, end: true }]}
     />
   )
 }

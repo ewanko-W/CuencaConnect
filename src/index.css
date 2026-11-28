@@ -1305,3 +1305,249 @@ h2 {
   position: static;
   border-radius: var(--radius);
 }
+
+/* =====================================================================
+ * Batch 1: icons, active navigation, and text that stays in its box
+ * ===================================================================== */
+
+/* Icons (lucide-react) next to text */
+.with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.with-icon > * {
+  min-width: 0;
+}
+
+.with-icon svg,
+.icon {
+  flex-shrink: 0;
+}
+
+.button svg {
+  flex-shrink: 0;
+  margin-right: 0.35rem;
+}
+
+.quick-action svg {
+  flex-shrink: 0;
+}
+
+.map-pin__symbol {
+  display: grid;
+  place-items: center;
+  color: var(--color-primary-dark);
+}
+
+.map-pin--critical .map-pin__symbol {
+  color: var(--color-critical);
+}
+
+.category-option__icon {
+  display: grid;
+  place-items: center;
+  color: var(--color-primary);
+}
+
+.vote-counts {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
+.offline-banner__icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.live-indicator {
+  gap: 0.3rem;
+}
+
+/* ---------- Active navigation: always clearly highlighted ---------- */
+.bottom-nav a {
+  gap: 0.15rem;
+  margin: 0 0.15rem;
+  padding: 0.3rem 0.15rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.bottom-nav__label {
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.bottom-nav a.active {
+  background: #dbe8f7;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.bottom-nav a.active::before {
+  content: '';
+  position: absolute;
+  top: -0.3rem;
+  left: 25%;
+  right: 25%;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--color-primary);
+}
+
+.bottom-nav a.active .bottom-nav__label {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.topbar__icon {
+  color: #fff;
+  border: 2px solid transparent;
+}
+
+.topbar__icon.active {
+  background: #fff;
+  color: var(--color-primary-dark);
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  border-left: 4px solid transparent;
+}
+
+.sidebar-nav a:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
+.sidebar-nav a.active,
+.sidebar-nav a.active:hover {
+  background: #fff;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  border-left-color: #f2b705;
+}
+
+.sidebar-nav a:focus-visible,
+.bottom-nav a:focus-visible,
+.topbar__icon:focus-visible {
+  outline: 3px solid #f2b705;
+  outline-offset: 2px;
+}
+
+/* ---------- Text wraps instead of overflowing (360, 768, 1280 px) ---------- */
+body {
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+.lead,
+.card p,
+.badge,
+.chip,
+dd {
+  overflow-wrap: anywhere;
+}
+
+.badge {
+  white-space: normal;
+  max-width: 100%;
+}
+
+/* Fieldset legends render on the border by default; keep them inside the card. */
+fieldset > legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+fieldset > legend + * {
+  clear: both;
+}
+
+.report-form legend {
+  padding: 0;
+}
+
+.report-header {
+  flex-wrap: wrap;
+}
+
+.report-header > * {
+  min-width: 0;
+}
+
+.list__item > *,
+.hotline > *,
+.office > *,
+.timeline__step > div,
+.critical-panel__item > *,
+.detail-grid > *,
+.two-column > *,
+.command-grid > * {
+  min-width: 0;
+}
+
+.office,
+.hotline {
+  flex-wrap: wrap;
+}
+
+.category-option__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.details dd,
+.details dt {
+  min-width: 0;
+}
+
+.filter-bar .field--inline {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.filter-bar select {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .sidebar-nav {
+    flex-wrap: wrap;
+  }
+
+  .sidebar-nav a {
+    border-left: 0;
+    border-bottom: 3px solid transparent;
+  }
+
+  .sidebar-nav a.active,
+  .sidebar-nav a.active:hover {
+    border-bottom-color: #f2b705;
+  }
+}
+
+@media (max-width: 420px) {
+  .category-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.5rem;
+  }
+}

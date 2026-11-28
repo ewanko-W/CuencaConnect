@@ -36,11 +36,11 @@ describe('resident area: verification gating (CLAUDE.md)', () => {
     const nav = await screen.findByRole('navigation', { name: 'Resident navigation' })
     const links = within(nav).getAllByRole('link').map((link) => [link.textContent, link.getAttribute('href')])
     expect(links).toEqual([
-      ['🏠Home', '/app'],
-      ['➕Report', '/app/report'],
-      ['📋My reports', '/app/reports'],
-      ['🗺️Map', '/app/map'],
-      ['🔔Alerts', '/app/alerts'],
+      ['Home', '/app'],
+      ['Report', '/app/report'],
+      ['My reports', '/app/reports'],
+      ['Map', '/app/map'],
+      ['Alerts', '/app/alerts'],
     ])
     expect(screen.getByRole('link', { name: 'Hotlines and offices' })).toHaveAttribute('href', '/app/directory')
   })

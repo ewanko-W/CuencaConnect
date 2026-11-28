@@ -1,3 +1,5 @@
+import { TriangleAlert } from 'lucide-react'
+import { CategoryLabel } from '../../components/icons/CategoryLabel'
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FilterBar } from '../../components/admin/FilterBar'
@@ -10,7 +12,6 @@ import { filtersFromSearch, filtersToSearch } from '../../lib/admin/filters'
 import type { AdminReport, ReportFilters } from '../../lib/admin/types'
 import { fetchBarangays } from '../../lib/auth/api'
 import { formatRelative } from '../../lib/format'
-import { CATEGORY_INFO } from '../../lib/reports/types'
 import { useAsyncData } from '../../lib/useAsyncData'
 
 function officeLabel(r: AdminReport): string {
@@ -24,14 +25,17 @@ export function CriticalPanel({ reports }: { reports: AdminReport[] }) {
   if (reports.length === 0) return null
   return (
     <section className="critical-panel" aria-labelledby="critical-title">
-      <h2 id="critical-title">⚠ Critical, open ({reports.length})</h2>
+      <h2 id="critical-title" className="with-icon">
+        <TriangleAlert size={20} aria-hidden="true" />
+        <span>Critical, open ({reports.length})</span>
+      </h2>
       <p className="small">Always shown, whatever the filters.</p>
       <ul className="critical-panel__list">
         {reports.map((r) => (
           <li key={r.id}>
             <Link to={`/admin/command/${r.id}`} className="critical-panel__item">
               <strong>
-                {CATEGORY_INFO[r.category].icon} {CATEGORY_INFO[r.category].label}
+                <CategoryLabel category={r.category} />
               </strong>
               <span>{r.barangay?.name ?? 'Barangay not set'}</span>
               <span>{r.assigned_office ? `Routed to ${r.assigned_office.code}` : 'NOT ROUTED'}</span>
@@ -117,7 +121,7 @@ export function CommandPage() {
                   </td>
                   <td>
                     <Link to={`/admin/command/${r.id}`} className="table-link">
-                      {CATEGORY_INFO[r.category].icon} {CATEGORY_INFO[r.category].label}
+                      <CategoryLabel category={r.category} />
                     </Link>
                     <div className="small clamp-2">{r.description}</div>
                     <div className="muted small">

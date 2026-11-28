@@ -1,3 +1,4 @@
+import { LogOut, type LucideIcon } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../lib/auth/AuthContext'
 import { OfflineBanner } from '../pwa/OfflineBanner'
@@ -5,6 +6,7 @@ import { OfflineBanner } from '../pwa/OfflineBanner'
 export interface SidebarLink {
   to: string
   label: string
+  icon: LucideIcon
   end?: boolean
 }
 
@@ -19,13 +21,15 @@ export function SidebarLayout({ title, label, links }: { title: string; label: s
         <nav aria-label={label} className="sidebar-nav">
           {links.map((link) => (
             <NavLink key={link.to} to={link.to} end={link.end}>
-              {link.label}
+              <link.icon size={20} aria-hidden="true" />
+              <span>{link.label}</span>
             </NavLink>
           ))}
         </nav>
         <div className="sidebar-footer">
           <span className="muted">{profile?.display_name}</span>
-          <button type="button" className="button button--small" onClick={() => void signOut()}>
+          <button type="button" className="button button--small with-icon" onClick={() => void signOut()}>
+            <LogOut size={16} aria-hidden="true" />
             Sign out
           </button>
         </div>

@@ -1,3 +1,5 @@
+import { CategoryIcon } from '../../components/icons/CategoryLabel'
+import { Camera, LocateFixed, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LocationPicker } from '../../components/map/LocationPicker'
@@ -176,7 +178,8 @@ function ReportForm() {
           {errors.location && <p className="field-error small">{errors.location}</p>}
         </div>
         <button type="button" className="button button--small" onClick={locateMe}>
-          📡 Use my current location
+          <LocateFixed size={18} aria-hidden="true" />
+          Use my current location
         </button>
         <label className="field">
           <span>Barangay where it happened</span>
@@ -211,7 +214,7 @@ function ReportForm() {
             <figure key={photo.url} className="photo-thumb">
               <img src={photo.url} alt={`Photo ${i + 1}`} />
               <button type="button" className="photo-thumb__remove" onClick={() => removePhoto(i)} aria-label={`Remove photo ${i + 1}`}>
-                ✕
+                <X size={18} aria-hidden="true" />
               </button>
             </figure>
           ))}
@@ -223,7 +226,8 @@ function ReportForm() {
         )}
         {photos.length < MAX_PHOTOS && (
           <button type="button" className="button" onClick={() => fileInput.current?.click()}>
-            📷 Take photo
+            <Camera size={18} aria-hidden="true" />
+            Take photo
           </button>
         )}
       </fieldset>
@@ -242,10 +246,10 @@ function ReportForm() {
                 onChange={() => setCategory(c)}
                 className="visually-hidden"
               />
-              <span aria-hidden="true" className="category-option__icon">
-                {CATEGORY_INFO[c].icon}
+              <span className="category-option__icon">
+                <CategoryIcon category={c} size={22} />
               </span>
-              <span>
+              <span className="category-option__text">
                 {CATEGORY_INFO[c].label}
                 <small className="muted"> / {CATEGORY_INFO[c].filipino}</small>
               </span>

@@ -1,3 +1,4 @@
+import { Bell, ClipboardList, House, Map as MapIcon, Phone, CirclePlus, User } from 'lucide-react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAlerts } from '../lib/alerts/AlertsContext'
 import { AlertsProvider } from '../lib/alerts/AlertsProvider'
@@ -30,12 +31,12 @@ function AppShell() {
           CuencaConnect
         </Link>
         <nav className="topbar__actions" aria-label="Quick links">
-          <Link to="/app/directory" className="topbar__icon" aria-label="Hotlines and offices">
-            📞
-          </Link>
-          <Link to="/app/profile" className="topbar__icon" aria-label="Profile">
-            👤
-          </Link>
+          <NavLink to="/app/directory" className="topbar__icon" aria-label="Hotlines and offices" title="Hotlines and offices">
+            <Phone size={22} aria-hidden="true" />
+          </NavLink>
+          <NavLink to="/app/profile" className="topbar__icon" aria-label="Profile" title="Profile">
+            <User size={22} aria-hidden="true" />
+          </NavLink>
         </nav>
       </header>
       <OfflineBanner context="resident" />
@@ -44,16 +45,16 @@ function AppShell() {
       </main>
       <nav className="bottom-nav" aria-label="Resident navigation">
         <NavLink to="/app" end>
-          <span aria-hidden="true">🏠</span>
-          Home
+          <House size={22} aria-hidden="true" />
+          <span className="bottom-nav__label">Home</span>
         </NavLink>
         <NavLink to="/app/report">
-          <span aria-hidden="true">➕</span>
-          Report
+          <CirclePlus size={22} aria-hidden="true" />
+          <span className="bottom-nav__label">Report</span>
         </NavLink>
         <NavLink to="/app/reports">
-          <span aria-hidden="true">📋</span>
-          My reports
+          <ClipboardList size={22} aria-hidden="true" />
+          <span className="bottom-nav__label">My reports</span>
           {drafts.length > 0 && (
             <span className="nav-badge" aria-label={`${drafts.length} unsent`}>
               {drafts.length}
@@ -61,12 +62,12 @@ function AppShell() {
           )}
         </NavLink>
         <NavLink to="/app/map">
-          <span aria-hidden="true">🗺️</span>
-          Map
+          <MapIcon size={22} aria-hidden="true" />
+          <span className="bottom-nav__label">Map</span>
         </NavLink>
         <NavLink to="/app/alerts">
-          <span aria-hidden="true">🔔</span>
-          Alerts
+          <Bell size={22} aria-hidden="true" />
+          <span className="bottom-nav__label">Alerts</span>
           {urgent > 0 && (
             <span className="nav-badge nav-badge--urgent" aria-label={`${urgent} urgent`}>
               {urgent}

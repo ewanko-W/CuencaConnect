@@ -1,3 +1,6 @@
+import { ArrowLeft } from 'lucide-react'
+import { CategoryLabel } from '../../components/icons/CategoryLabel'
+import { VoteCounts } from '../../components/reports/VoteCounts'
 import { useState, type FormEvent } from 'react'
 import { Marker } from 'react-leaflet'
 import { Link, useParams } from 'react-router-dom'
@@ -11,7 +14,6 @@ import { fetchActiveOffices, fetchAdminReport, routeReport, setReportStatus } fr
 import { canRoute, statusActions, type StatusAction } from '../../lib/admin/statusActions'
 import type { AdminOffice, AdminReportDetail } from '../../lib/admin/types'
 import { formatDateTime } from '../../lib/format'
-import { CATEGORY_INFO } from '../../lib/reports/types'
 import { useAsyncData } from '../../lib/useAsyncData'
 
 export function AdminReportPage() {
@@ -23,7 +25,8 @@ export function AdminReportPage() {
   return (
     <section className="stack">
       <Link to="/admin/command" className="back-link">
-        ← Command Center
+        <ArrowLeft size={18} aria-hidden="true" />
+        Command Center
       </Link>
 
       {report.loading && !r && <p role="status">Loading report…</p>}
@@ -37,8 +40,7 @@ export function AdminReportPage() {
         <>
           <header className="report-header">
             <h1>
-              {CATEGORY_INFO[r.category].icon} {CATEGORY_INFO[r.category].label}{' '}
-              <small className="muted">/ {CATEGORY_INFO[r.category].filipino}</small>
+              <CategoryLabel category={r.category} showFilipino size={28} />
             </h1>
             <div className="badge-row">
               <SeverityBadge severity={r.severity} />
@@ -65,7 +67,7 @@ export function AdminReportPage() {
                   </dd>
                   <dt>Community</dt>
                   <dd>
-                    👍 {r.confirm_count} confirmed · 👎 {r.dispute_count} disputed{' '}
+                    <VoteCounts confirms={r.confirm_count} disputes={r.dispute_count} />{' '}
                     <CommunityBadge status={r.community_status} showPending />
                     {r.is_critical && r.community_status === 'disputed' && (
                       <p className="small text-critical">Disputed, but kept at critical priority: disputes never hide or downgrade critical reports.</p>
@@ -89,7 +91,7 @@ export function AdminReportPage() {
               </section>
 
               <BaseMap center={{ lat: r.lat, lng: r.lng }} zoom={17} label="Report location" className="map">
-                <Marker position={[r.lat, r.lng]} icon={pinIcon(CATEGORY_INFO[r.category].icon, r.severity ?? 'default')} />
+                <Marker position={[r.lat, r.lng]} icon={pinIcon(r.category, r.severity ?? 'default')} />
               </BaseMap>
 
               {r.photoUrls.length > 0 && (
@@ -120,7 +122,7 @@ export function AdminReportPage() {
                     {r.routing.map((entry) => (
                       <li key={entry.id}>
                         <strong>
-                          {entry.from_office ? `${entry.from_office.name} → ` : ''}
+                          {entry.from_office ? `From ${entry.from_office.name} to ` : ''}
                           {entry.to_office?.name}
                         </strong>
                         <span className="muted small"> · {formatDateTime(entry.created_at)}</span>
@@ -187,7 +189,7 @@ export function RoutingCard({
           <strong className="text-critical">Not routed yet.</strong>
         )}{' '}
         {report.suggested_office && (
-          <span className="muted">Triage suggests ★ {report.suggested_office.name}.</span>
+          <span className="muted">Triage suggests {report.suggested_office.name}.</span>
         )}
       </p>
       {routable ? (
@@ -198,8 +200,7 @@ export function RoutingCard({
               <option value="">Select an office</option>
               {offices.map((o) => (
                 <option key={o.id} value={o.id}>
-                  {o.id === report.suggested_office?.id ? '★ ' : ''}
-                  {o.name} ({o.code})
+                  {o.name} ({o.code}){o.id === report.suggested_office?.id ? ' (suggested)' : ''}
                 </option>
               ))}
             </select>

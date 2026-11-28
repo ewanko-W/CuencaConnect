@@ -1,3 +1,4 @@
+import { WifiOff } from 'lucide-react'
 import { useOnlineStatus } from './useOnlineStatus'
 
 export type OfflineContext = 'resident' | 'staff' | 'auth'
@@ -24,7 +25,7 @@ export function OfflineBanner({ context }: { context: OfflineContext }) {
   const message = OFFLINE_MESSAGES[context]
   return (
     <div className="offline-banner" role="status" aria-live="polite">
-      <span aria-hidden="true">📴</span>
+      <WifiOff size={20} aria-hidden="true" className="offline-banner__icon" />
       <p>
         <strong>{message.title}</strong> {message.body}
       </p>

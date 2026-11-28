@@ -1,3 +1,4 @@
+import { CirclePlus, ClipboardList, Map as MapIcon, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAlerts } from '../lib/alerts/AlertsContext'
 import { useAuth } from '../lib/auth/AuthContext'
@@ -37,16 +38,16 @@ export function AppHome() {
 
       <div className="quick-actions">
         <Link to="/app/report" className="quick-action quick-action--primary">
-          <span aria-hidden="true">➕</span> Report an incident
+          <CirclePlus size={28} aria-hidden="true" /> Report an incident
         </Link>
         <Link to="/app/map" className="quick-action">
-          <span aria-hidden="true">🗺️</span> Nearby incidents
+          <MapIcon size={28} aria-hidden="true" /> Nearby incidents
         </Link>
         <Link to="/app/reports" className="quick-action">
-          <span aria-hidden="true">📋</span> My reports
+          <ClipboardList size={28} aria-hidden="true" /> My reports
         </Link>
         <Link to="/app/directory" className="quick-action">
-          <span aria-hidden="true">📞</span> Hotlines
+          <Phone size={28} aria-hidden="true" /> Hotlines
         </Link>
       </div>
 

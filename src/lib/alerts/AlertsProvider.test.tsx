@@ -73,7 +73,7 @@ describe('AlertsProvider (Realtime)', () => {
     )
 
     act(() => fake.emitStatus('SUBSCRIBED'))
-    expect(screen.getByText('● Live')).toBeInTheDocument()
+    expect(screen.getByText('Live')).toBeInTheDocument()
 
     // An admin publishes an emergency alert.
     await act(async () => fake.emitChange())

@@ -8,7 +8,7 @@ export function summarize(entry: AuditEntry): string {
     case 'report.routed':
       return `Routed to office #${String(n.assigned_office_id)}${n.note ? ` (${String(n.note)})` : ''}`
     case 'report.status_changed':
-      return `${String(o.status)} → ${String(n.status)}${n.note ? ` (${String(n.note)})` : ''}`
+      return `${String(o.status)} to ${String(n.status)}${n.note ? ` (${String(n.note)})` : ''}`
     case 'alerts.insert':
       return `Broadcast ${String(n.level)}: ${String(n.title)}`
     case 'keywords.insert':

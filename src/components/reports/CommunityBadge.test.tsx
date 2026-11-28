@@ -26,9 +26,9 @@ const base: NearbyReport = {
 describe('CommunityBadge', () => {
   it('labels confirmed and disputed reports and hides pending by default', () => {
     const { rerender, container } = render(<CommunityBadge status="confirmed" />)
-    expect(screen.getByText('✔ Community-confirmed')).toBeInTheDocument()
+    expect(screen.getByText('Community-confirmed')).toBeInTheDocument()
     rerender(<CommunityBadge status="disputed" />)
-    expect(screen.getByText('⚠ Disputed')).toBeInTheDocument()
+    expect(screen.getByText('Disputed')).toBeInTheDocument()
     rerender(<CommunityBadge status="pending" />)
     expect(container).toBeEmptyDOMElement()
     rerender(<CommunityBadge status="pending" showPending />)
@@ -40,7 +40,7 @@ describe('IncidentCard (nearby map)', () => {
   it('keeps a disputed critical report visible and explains why', () => {
     render(<IncidentCard report={base} onVote={vi.fn()} onClose={vi.fn()} />)
     expect(screen.getByText('Critical')).toBeInTheDocument()
-    expect(screen.getByText('⚠ Disputed')).toBeInTheDocument()
+    expect(screen.getByText('Disputed')).toBeInTheDocument()
     expect(screen.getByRole('note')).toHaveTextContent(/stays visible because it may be an emergency/i)
   })
 
@@ -53,7 +53,7 @@ describe('IncidentCard (nearby map)', () => {
       />,
     )
     expect(screen.queryByText('Critical')).not.toBeInTheDocument()
-    expect(screen.getByText('✔ Community-confirmed')).toBeInTheDocument()
+    expect(screen.getByText('Community-confirmed')).toBeInTheDocument()
     expect(screen.queryByRole('note')).not.toBeInTheDocument()
   })
 })

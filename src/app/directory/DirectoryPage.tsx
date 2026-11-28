@@ -1,3 +1,4 @@
+import { Phone } from 'lucide-react'
 import { fetchOffices, telHref } from '../../lib/directory/api'
 import { useAsyncData } from '../../lib/useAsyncData'
 
@@ -13,7 +14,10 @@ export function DirectoryPage() {
           <strong>National Emergency Hotline</strong>
           <span className="muted small"> · police, fire, medical</span>
         </span>
-        <span className="hotline__number">📞 911</span>
+        <span className="hotline__number with-icon">
+          <Phone size={22} aria-hidden="true" />
+          911
+        </span>
       </a>
 
       {loading && !data && <p role="status">Loading offices…</p>}
@@ -37,7 +41,8 @@ export function DirectoryPage() {
               </div>
               {office.hotline ? (
                 <a className="button button--primary" href={telHref(office.hotline)} aria-label={`Call ${office.name}`}>
-                  📞 {office.hotline}
+                  <Phone size={18} aria-hidden="true" />
+                  {office.hotline}
                 </a>
               ) : (
                 <span className="muted small">No hotline listed</span>

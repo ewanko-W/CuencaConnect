@@ -35,7 +35,7 @@ export function LocationPicker({
   fallbackCenter: LatLng
   onChange: (position: LatLng) => void
 }) {
-  const icon = useMemo(() => pinIcon('📍', 'draft'), [])
+  const icon = useMemo(() => pinIcon('location', 'draft'), [])
   const handlers = useMemo(
     () => ({
       dragend: (e: { target: { getLatLng: () => { lat: number; lng: number } } }) => {

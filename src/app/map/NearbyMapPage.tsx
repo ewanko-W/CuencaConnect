@@ -1,3 +1,5 @@
+import { X } from 'lucide-react'
+import { CategoryLabel } from '../../components/icons/CategoryLabel'
 import { useMemo, useState } from 'react'
 import { Marker } from 'react-leaflet'
 import { BaseMap } from '../../components/map/BaseMap'
@@ -62,7 +64,7 @@ function NearbyMap() {
           <Marker
             key={r.id}
             position={[r.approx_lat, r.approx_lng]}
-            icon={pinIcon(CATEGORY_INFO[r.category].icon, r.is_mine ? 'mine' : 'default')}
+            icon={pinIcon(r.category, r.is_mine ? 'mine' : 'default')}
             title={`${CATEGORY_INFO[r.category].label}, ${formatDistance(r.distance_m)} away`}
             eventHandlers={{ click: () => setSelectedId(r.id) }}
           />
@@ -94,7 +96,7 @@ function NearbyMap() {
                 <button type="button" className="list__item list__item--button card" onClick={() => setSelectedId(r.id)}>
                   <span>
                     <strong>
-                      {CATEGORY_INFO[r.category].icon} {CATEGORY_INFO[r.category].label}
+                      <CategoryLabel category={r.category} />
                     </strong>
                     <span className="muted small">
                       {' '}
@@ -131,10 +133,10 @@ export function IncidentCard({
     <article className="card stack incident-card" aria-label={`${info.label} incident`}>
       <header className="report-header">
         <h2>
-          {info.icon} {info.label} <small className="muted">/ {info.filipino}</small>
+          <CategoryLabel category={report.category} showFilipino size={22} />
         </h2>
         <button type="button" className="button button--small" onClick={onClose} aria-label="Close incident details">
-          ✕
+          <X size={18} aria-hidden="true" />
         </button>
       </header>
       <p className="badge-row">

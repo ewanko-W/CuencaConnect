@@ -1,9 +1,11 @@
+import { ArrowLeft } from 'lucide-react'
+import { CategoryLabel } from '../../components/icons/CategoryLabel'
+import { VoteCounts } from '../../components/reports/VoteCounts'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { StatusBadge } from '../../components/reports/StatusBadge'
 import { StatusTimeline } from '../../components/reports/StatusTimeline'
 import { formatDateTime } from '../../lib/format'
 import { fetchReportDetail } from '../../lib/reports/api'
-import { CATEGORY_INFO } from '../../lib/reports/types'
 import { useAsyncData } from '../../lib/useAsyncData'
 
 export function ReportDetailPage() {
@@ -15,7 +17,8 @@ export function ReportDetailPage() {
   return (
     <section className="stack">
       <Link to="/app/reports" className="back-link">
-        ← My reports
+        <ArrowLeft size={18} aria-hidden="true" />
+        My reports
       </Link>
 
       {justSubmitted && (
@@ -38,7 +41,7 @@ export function ReportDetailPage() {
         <>
           <header className="report-header">
             <h1>
-              {CATEGORY_INFO[report.category].icon} {CATEGORY_INFO[report.category].label}
+              <CategoryLabel category={report.category} size={28} />
             </h1>
             <StatusBadge status={report.status} />
           </header>
@@ -57,7 +60,7 @@ export function ReportDetailPage() {
               {report.location_source === 'gps' ? 'GPS' : 'adjusted on the map'})
             </p>
             <p className="muted small">
-              Nearby residents: 👍 {report.confirm_count} confirmed · 👎 {report.dispute_count} disputed
+              Nearby residents: <VoteCounts confirms={report.confirm_count} disputes={report.dispute_count} />
             </p>
           </section>
 

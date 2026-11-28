@@ -1,3 +1,5 @@
+import { CategoryLabel } from '../../components/icons/CategoryLabel'
+import { VoteCounts } from '../../components/reports/VoteCounts'
 import { Link } from 'react-router-dom'
 import { StatusBadge } from '../../components/reports/StatusBadge'
 import { VerificationGate } from '../../components/VerificationGate'
@@ -5,7 +7,6 @@ import { useAuth } from '../../lib/auth/AuthContext'
 import { formatRelative } from '../../lib/format'
 import { fetchMyReports } from '../../lib/reports/api'
 import { useOutbox } from '../../lib/reports/OutboxContext'
-import { CATEGORY_INFO } from '../../lib/reports/types'
 import { useAsyncData } from '../../lib/useAsyncData'
 
 export function MyReportsPage() {
@@ -36,7 +37,7 @@ export function OutboxList() {
             <li key={draft.clientUuid} className="list__item">
               <div>
                 <strong>
-                  {CATEGORY_INFO[draft.category].icon} {CATEGORY_INFO[draft.category].label}
+                  <CategoryLabel category={draft.category} />
                 </strong>
                 <p className="small">{draft.description}</p>
                 <p className="muted small">
@@ -107,11 +108,11 @@ function SubmittedList() {
           <Link to={`/app/reports/${report.id}`} className="list__item list__item--link card">
             <div>
               <strong>
-                {CATEGORY_INFO[report.category].icon} {CATEGORY_INFO[report.category].label}
+                <CategoryLabel category={report.category} />
               </strong>
               <p className="small clamp-2">{report.description}</p>
               <p className="muted small">
-                {formatRelative(report.created_at)} · 👍 {report.confirm_count} · 👎 {report.dispute_count}
+                {formatRelative(report.created_at)} · <VoteCounts confirms={report.confirm_count} disputes={report.dispute_count} compact />
               </p>
             </div>
             <StatusBadge status={report.status} />

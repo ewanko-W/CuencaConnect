@@ -129,7 +129,7 @@ describe('audit summaries', () => {
     )
     expect(
       summarize({ ...base, action: 'report.status_changed', old_data: { status: 'routed' }, new_data: { status: 'resolved' } }),
-    ).toBe('routed → resolved')
+    ).toBe('routed to resolved')
   })
 
   it('lists changed fields for generic updates', () => {

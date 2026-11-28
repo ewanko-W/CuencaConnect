@@ -7,7 +7,7 @@ export interface TimelineStep {
 }
 
 /**
- * Builds the timeline: the normal path (submitted → … → resolved) with the
+ * Builds the timeline: the normal path (submitted, then routed, received, in progress, resolved) with the
  * time each step happened, or, for closed-without-resolution reports
  * (rejected/duplicate), the events exactly as they happened.
  */

@@ -10,16 +10,16 @@ export const REPORT_CATEGORIES = [
 ] as const
 export type ReportCategory = (typeof REPORT_CATEGORIES)[number]
 
-/** Bilingual labels (English / Filipino) and an icon for each category. */
-export const CATEGORY_INFO: Record<ReportCategory, { label: string; filipino: string; icon: string }> = {
-  fire: { label: 'Fire', filipino: 'Sunog', icon: '🔥' },
-  flood: { label: 'Flood', filipino: 'Baha', icon: '🌊' },
-  medical: { label: 'Medical', filipino: 'Medikal', icon: '🚑' },
-  crime: { label: 'Crime', filipino: 'Krimen', icon: '🚨' },
-  road: { label: 'Road', filipino: 'Daan', icon: '🚧' },
-  utilities: { label: 'Utilities', filipino: 'Kuryente/Tubig', icon: '💡' },
-  waste: { label: 'Waste', filipino: 'Basura', icon: '🗑️' },
-  other: { label: 'Other', filipino: 'Iba pa', icon: '📍' },
+/** Bilingual labels (English / Filipino). Icons: src/components/icons/categoryIcons.ts. */
+export const CATEGORY_INFO: Record<ReportCategory, { label: string; filipino: string }> = {
+  fire: { label: 'Fire', filipino: 'Sunog' },
+  flood: { label: 'Flood', filipino: 'Baha' },
+  medical: { label: 'Medical', filipino: 'Medikal' },
+  crime: { label: 'Crime', filipino: 'Krimen' },
+  road: { label: 'Road', filipino: 'Daan' },
+  utilities: { label: 'Utilities', filipino: 'Kuryente/Tubig' },
+  waste: { label: 'Waste', filipino: 'Basura' },
+  other: { label: 'Other', filipino: 'Iba pa' },
 }
 
 export type ReportStatus =

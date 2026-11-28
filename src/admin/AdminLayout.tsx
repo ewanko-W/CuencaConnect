@@ -1,3 +1,4 @@
+import { Languages, Map as MapIcon, Megaphone, ScrollText } from 'lucide-react'
 import { SidebarLayout } from '../components/SidebarLayout'
 
 export function AdminLayout() {
@@ -6,10 +7,10 @@ export function AdminLayout() {
       title="CuencaConnect Admin"
       label="Admin navigation"
       links={[
-        { to: '/admin/command', label: '🗺️ Command Center' },
-        { to: '/admin/alerts', label: '📢 Alerts' },
-        { to: '/admin/keywords', label: '🔤 Keywords' },
-        { to: '/admin/audit', label: '📜 Audit log' },
+        { to: '/admin/command', label: 'Command Center', icon: MapIcon },
+        { to: '/admin/alerts', label: 'Alerts', icon: Megaphone },
+        { to: '/admin/keywords', label: 'Keywords', icon: Languages },
+        { to: '/admin/audit', label: 'Audit log', icon: ScrollText },
       ]}
     />
   )

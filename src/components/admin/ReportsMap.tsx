@@ -38,7 +38,7 @@ export function ReportsMap({
         <Marker
           key={r.id}
           position={[r.lat, r.lng]}
-          icon={pinIcon(CATEGORY_INFO[r.category].icon, r.severity ?? 'default')}
+          icon={pinIcon(r.category, r.severity ?? 'default')}
           zIndexOffset={(r.is_critical ? 1000 : 0) + (r.id === selectedId ? 2000 : 0)}
           eventHandlers={{ click: () => onSelect(r.id) }}
           title={`${CATEGORY_INFO[r.category].label}: ${STATUS_LABELS[r.status]}`}
